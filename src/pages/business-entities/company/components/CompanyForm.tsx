@@ -485,6 +485,7 @@ const CompanyForm = () => {
                 <Field.ErrorText>{errors?.trn_number?.message}</Field.ErrorText>
               </Field.Root>
             </div>
+            <br />
 
             <Heading mb={4}>Documents</Heading>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">

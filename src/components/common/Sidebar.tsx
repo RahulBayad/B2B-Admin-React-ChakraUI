@@ -13,7 +13,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { NavLink } from "react-router";
-import { Button } from "@chakra-ui/react";
+import { Box, Button } from "@chakra-ui/react";
 
 const Sidebar = () => {
   const navMenu = [
@@ -140,7 +140,7 @@ const Sidebar = () => {
           <NavLink to={url ? url : "#"}>
             <Button 
               width="100%" 
-              variant="surface"
+              variant="ghost"
               borderRadius={0} 
               padding="0 10px"
               justifyContent="start"
@@ -154,7 +154,7 @@ const Sidebar = () => {
             <Button
               onClick={() => toggleSubMenu()}
               width="100%"
-              variant="surface"
+              variant="ghost"
               borderRadius={0}
               padding="0 10px"
               justifyContent="start"
@@ -180,7 +180,7 @@ const Sidebar = () => {
               return (
                 <NavLink key={index} to={url + item.url} className="">
                   <Button 
-                    variant="surface"
+                    variant="ghost"
                     width="100%" 
                     borderRadius={0}
                     padding="0 10px"
@@ -201,10 +201,10 @@ const Sidebar = () => {
   };
 
   return (
-    <div className=" bg-white border-r border-gray-200 text-sm min-w-[220px] min-h-full overflow-y-auto overflow-x-hidden shadow-xl">
-      {/* <figure className="px-3 py-2">
-        <img src="/vite.svg" className="w-full h-16" />
-      </figure> */}
+    <Box borderRightWidth={1} className="text-sm min-w-[220px] min-h-full overflow-y-auto overflow-x-hidden">
+      <figure style={{padding: "10px 0"}} className="flex justify-center">
+        <img src="/vite.svg" className="w-20" />
+      </figure>
       {navMenu.map((nav, index) => (
         <div key={index} className="">
           <SidebarItem
@@ -215,7 +215,7 @@ const Sidebar = () => {
           />
         </div>
       ))}
-    </div>
+    </Box>
   );
 };
 
