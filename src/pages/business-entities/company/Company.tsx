@@ -63,17 +63,18 @@ const companyTableData: CompanyTable[] = [
 
 const columns: TableColumnDef<CompanyTable>[] = [
   { accessorKey: "name", header: "Company", width: 150, },
-  // {accessorKey : "id", header: "Company ID", width: 150,},
-  {
-    accessorKey: "gst",
-    header: "Legal", width: 150,
-    cell: (params) => (
-      <div className='flex flex-col'>
-        <span><b>GST: </b>{params.row.original.gst}</span>
-        <span><b>PAN: </b>{params.row.original.pan}</span>
-      </div>
-    )
-  },
+  { accessorKey: "gst", header: "GST", width: 150, },
+  { accessorKey: "pan", header: "PAN", width: 150, },
+  // {
+  //   accessorKey: "gst",
+  //   header: "Legal", width: 150,
+  //   cell: (params) => (
+  //     <div className='flex flex-col'>
+  //       <span>GST: {params.row.original.gst}</span>
+  //       <span>PAN: {params.row.original.pan}</span>
+  //     </div>
+  //   )
+  // },
   { accessorKey: "owner", header: "Owner Name", width: 150, },
   { accessorKey: "email", header: "Email", width: 150, },
   { accessorKey: "mobile", header: "Contact", width: 150, },
@@ -84,8 +85,8 @@ const Company = () => {
     <React.Fragment>
       <div className='flex justify-between items-center mb-2'>
         <h1>Company</h1>
-        {/* <Button><Link to={"/business-entities/companies/create"}>Add New</Link></Button> */}
-        <Button><Link to={"#"}>Add New</Link></Button>
+        <Button size="xs"><Link to={"/business-entities/companies/create"}>Add New</Link></Button>
+        {/* <Button size="xs"><Link to={"#"}>Add New</Link></Button> */}
       </div>
       <DataTable
         columns={columns}

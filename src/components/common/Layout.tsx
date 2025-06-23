@@ -10,7 +10,7 @@ const Layout = () => {
       <Sidebar/>  
       <div className='h-full w-full'>
         <Header/>
-        <Box p={6} overflow="auto" >
+        <Box p={6} overflow="auto" height="91%" >
           <Outlet/>
         </Box>
       </div>

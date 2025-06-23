@@ -1,18 +1,12 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Breadcrumbs,
+  Box,
   Button,
-  FormControl,
-  FormHelperText,
-  FormLabel,
+  Field,
+  Heading,
   Input,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
+  NativeSelect,
+} from "@chakra-ui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link } from "react-router";
@@ -20,76 +14,76 @@ import { z } from "zod";
 
 const CompanyForm = () => {
   const companyFormSchema = z.object({
-  company_name: z
-    .string({ required_error: "Company Name is required" })
-    .trim()
-    .min(2, { message: "Name must be larger than 2 characters" }),
-  ownership: z.string().trim().optional(),
-  owner: z.string().trim().optional(),
-  establishment_year: z.number().optional(),
-  company_type: z.string().trim().optional(),
-  company_website: z.string().trim().optional(),
-  company_logo_brochure: z.string().trim().optional(),
-  status: z
-    .string({ required_error: "Please choose a status" })
-    .min(1, { message: "Status is required" }),
-  country: z.string().trim().optional(),
-  state: z.string().trim().optional(),
-  city: z.string().trim().optional(),
-  zip_postal_code: z.number().optional(),
-  address: z.string().trim().optional(),
-  primary_contact_number: z.number().optional(),
-  primary_contact_number_code: z.number().optional(), // Made optional to avoid missing input issue
-  alternate_contact_number: z.number().optional(),
-  alternate_contact_country_code: z.number().optional(),
-  primary_email: z
-    .string()
-    .trim()
-    .min(1, { message: "Primary Email is required" }),
-  alternate_email: z.string().trim().optional(),
-  notification_email: z.string().trim().optional(),
-  gst_number: z.string().trim().optional(),
-  pan_number: z.string().trim().optional(),
-  trn_number: z.string().trim().optional(),
-  tan_number: z.string().trim().optional(),
-  primary_business_type: z.string().trim().optional(),
-  primary_business_category: z.string().trim().optional(),
-  sub_category: z.string().trim().optional(),
-  interested_in: z.string().trim().optional(),
-  gst_certificate: z
-    .any()
-    .optional()
-    .refine((val) => val === undefined || val instanceof File, {
-      message: "GST Certificate must be a file or empty",
-    }),
-  aadhar_card: z
-    .any()
-    .optional()
-    .refine((val) => val === undefined || val instanceof File, {
-      message: "Aadhar Card must be a file or empty",
-    }),
-  pan_card: z
-    .any()
-    .optional()
-    .refine((val) => val === undefined || val instanceof File, {
-      message: "PAN Card must be a file or empty",
-    }),
-  authority_letter: z
-    .any()
-    .optional()
-    .refine((val) => val === undefined || val instanceof File, {
-      message: "Authority Letter must be a file or empty",
-    }),
-  primary_account_number: z.string().trim().optional(),
-  primary_ifsc_code: z.string().trim().optional(),
-  primary_bank_name: z.string().trim().optional(),
-  primary_bank_verification_photo: z
-    .any()
-    .optional()
-    .refine((val) => val === undefined || val instanceof File, {
-      message: "Bank Verification Photo must be a file or empty",
-    }),
-});
+    company_name: z
+      .string({ required_error: "Company Name is required" })
+      .trim()
+      .min(2, { message: "Name must be larger than 2 characters" }),
+    ownership: z.string().trim().optional(),
+    owner: z.string().trim().optional(),
+    establishment_year: z.number().optional(),
+    company_type: z.string().trim().optional(),
+    company_website: z.string().trim().optional(),
+    company_logo_brochure: z.string().trim().optional(),
+    status: z
+      .string({ required_error: "Please choose a status" })
+      .min(1, { message: "Status is required" }),
+    country: z.string().trim().optional(),
+    state: z.string().trim().optional(),
+    city: z.string().trim().optional(),
+    zip_postal_code: z.number().optional(),
+    address: z.string().trim().optional(),
+    primary_contact_number: z.number().optional(),
+    primary_contact_number_code: z.number().optional(), // Made optional to avoid missing input issue
+    alternate_contact_number: z.number().optional(),
+    alternate_contact_country_code: z.number().optional(),
+    primary_email: z
+      .string()
+      .trim()
+      .min(1, { message: "Primary Email is required" }),
+    alternate_email: z.string().trim().optional(),
+    notification_email: z.string().trim().optional(),
+    gst_number: z.string().trim().optional(),
+    pan_number: z.string().trim().optional(),
+    trn_number: z.string().trim().optional(),
+    tan_number: z.string().trim().optional(),
+    primary_business_type: z.string().trim().optional(),
+    primary_business_category: z.string().trim().optional(),
+    sub_category: z.string().trim().optional(),
+    interested_in: z.string().trim().optional(),
+    gst_certificate: z
+      .any()
+      .optional()
+      .refine((val) => val === undefined || val instanceof File, {
+        message: "GST Certificate must be a file or empty",
+      }),
+    aadhar_card: z
+      .any()
+      .optional()
+      .refine((val) => val === undefined || val instanceof File, {
+        message: "Aadhar Card must be a file or empty",
+      }),
+    pan_card: z
+      .any()
+      .optional()
+      .refine((val) => val === undefined || val instanceof File, {
+        message: "PAN Card must be a file or empty",
+      }),
+    authority_letter: z
+      .any()
+      .optional()
+      .refine((val) => val === undefined || val instanceof File, {
+        message: "Authority Letter must be a file or empty",
+      }),
+    primary_account_number: z.string().trim().optional(),
+    primary_ifsc_code: z.string().trim().optional(),
+    primary_bank_name: z.string().trim().optional(),
+    primary_bank_verification_photo: z
+      .any()
+      .optional()
+      .refine((val) => val === undefined || val instanceof File, {
+        message: "Bank Verification Photo must be a file or empty",
+      }),
+  });
 
   const {
     control,
@@ -97,16 +91,16 @@ const CompanyForm = () => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(companyFormSchema),
-    defaultValues : {
+    defaultValues: {
       status: "",
       ownership: "",
       company_type: "",
       company_name: "",
-    }
+    },
   });
 
   const submitHandler = (data) => {
-    console.log("Data",data);
+    console.log("Data", data);
   };
   const onError = (errors) => {
     console.error("Validation Errors", errors);
@@ -114,476 +108,427 @@ const CompanyForm = () => {
 
   return (
     <div>
-      <Breadcrumbs aria-label="breadcrumb">
+      {/* <Breadcrumbs aria-label="breadcrumb">
         <Link to="/business-entities/companies" className="hover:underline">
           MUI
         </Link>
-        <Typography sx={{ color: "text.primary" }}>Breadcrumbs</Typography>
-      </Breadcrumbs>
+        <Heading mb={4} style={{ color: "text.primary" }}>Breadcrumbs</Heading>
+      </Breadcrumbs> */}
 
-      <Paper sx={{ p: 2, mt: 2 }}>
+      <Box>
         <form onSubmit={handleSubmit(submitHandler, onError)} className="">
-          <div >
-            <Typography variant="h6" sx={{fontSize: "1.2rem", mb:1.5, mt:1}} >Primary Information</Typography>
+          <div>
+            <Heading mb={4}>Primary Information</Heading>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Company Name</FormLabel>
+              <Field.Root invalid={!!errors?.company_name}>
+                <Field.Label>Company Name</Field.Label>
                 <Controller
                   name="company_name"
                   control={control}
                   render={({ field }) => (
-                    <TextField
+                    <Input
                       type="text"
-                      size="small"
                       placeholder="Enter Company Name"
                       {...field}
-                      error={!!errors?.company_name}
-                      helperText={errors?.company_name?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth error={!!errors.status}>
-                <FormLabel sx={{mb:0.5}}>Status</FormLabel>
+                <Field.ErrorText>
+                  {errors?.company_name?.message}
+                </Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.status}>
+                <Field.Label>Status</Field.Label>
                 <Controller
                   name="status"
                   control={control}
                   render={({ field }) => (
-                    <Select id="Status" size="small" {...field}>
-                      <MenuItem value=""  disabled>Select Status</MenuItem>
-                      <MenuItem value="active">Active</MenuItem>
-                      <MenuItem value="Inactive">Inactive</MenuItem>
-                      <MenuItem value="Disabled">Diabled</MenuItem>
-                    </Select>
+                    <NativeSelect.Root>
+                      <NativeSelect.Field {...field}>
+                        <option value="" disabled>
+                          Select Status
+                        </option>
+                        <option value="active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Disabled">Diabled</option>
+                      </NativeSelect.Field>
+                      <NativeSelect.Indicator />
+                    </NativeSelect.Root>
                   )}
                 />
-                <FormHelperText>{errors?.status?.message}</FormHelperText>
-              </FormControl>
-              <FormControl fullWidth error={!!errors.ownership}>
-                <FormLabel sx={{mb:0.5}}>Ownership Type</FormLabel>
+                <Field.ErrorText>{errors?.status?.message}</Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.ownership}>
+                <Field.Label>Ownership Type</Field.Label>
                 <Controller
                   name="ownership"
                   control={control}
                   render={({ field }) => (
-                    <Select size="small" {...field}>
-                      <MenuItem value="active">active</MenuItem>
-                    </Select>
+                    <NativeSelect.Root>
+                      <NativeSelect.Field {...field}>
+                        <option value="" disabled>
+                          Select Status
+                        </option>
+                        <option value="active">Active</option>
+                      </NativeSelect.Field>
+                      <NativeSelect.Indicator />
+                    </NativeSelect.Root>
                   )}
                 />
-                <FormHelperText>{errors?.ownership?.message}</FormHelperText>
-              </FormControl>
-              <FormControl fullWidth error={!!errors.company_type}>
-                <FormLabel sx={{mb:0.5}}>Company Type</FormLabel>
+                <Field.ErrorText>{errors?.ownership?.message}</Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.company_type}>
+                <Field.Label>Company Type</Field.Label>
                 <Controller
                   name="company_type"
                   control={control}
                   render={({ field }) => (
-                    <Select size="small"  {...field}>
-                      <MenuItem value="Active">Active</MenuItem>
-                    </Select>
+                    <NativeSelect.Root>
+                      <NativeSelect.Field {...field}>
+                        <option value="" disabled>
+                          Select Status
+                        </option>
+                        <option value="active">Active</option>
+                      </NativeSelect.Field>
+                      <NativeSelect.Indicator />
+                    </NativeSelect.Root>
                   )}
                 />
-                <FormHelperText>{errors?.company_type?.message}</FormHelperText>
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Owner Name</FormLabel>
+                <Field.ErrorText>
+                  {errors?.company_type?.message}
+                </Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.owner}>
+                <Field.Label>Owner Name</Field.Label>
                 <Controller
                   name="owner"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="text"
-                      size="small"
                       placeholder="Enter Owner Name"
                       {...field}
-                      error={!!errors?.owner}
-                      helperText={errors?.owner?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Establishment Year</FormLabel>
+                <Field.ErrorText>{errors?.owner?.message}</Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.establishment_year}>
+                <Field.Label>Establishment Year</Field.Label>
                 <Controller
                   name="establishment_year"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="number"
-                      size="small"
                       placeholder="Enter Establishment Year"
                       {...field}
-                      error={!!errors?.establishment_year}
-                      helperText={errors?.establishment_year?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Country</FormLabel>
+                <Field.ErrorText>
+                  {errors?.establishment_year?.message}
+                </Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.country}>
+                <Field.Label>Country</Field.Label>
                 <Controller
                   name="country"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
-                      type="text"
-                      size="small"
-                      placeholder="Enter Country"
-                      {...field}
-                      error={!!errors?.country}
-                      helperText={errors?.country?.message}
-                    />
+                    <Input type="text" placeholder="Enter Country" {...field} />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>State</FormLabel>
+                <Field.ErrorText>{errors?.country?.message}</Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.state}>
+                <Field.Label>State</Field.Label>
                 <Controller
                   name="state"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
-                      type="text"
-                      size="small"
-                      placeholder="Enter State"
-                      {...field}
-                      error={!!errors?.state}
-                      helperText={errors?.state?.message}
-                    />
+                    <Input type="text" placeholder="Enter State" {...field} />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>City</FormLabel>
+                <Field.ErrorText>{errors?.state?.message}</Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.city}>
+                <Field.Label>City</Field.Label>
                 <Controller
                   name="city"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="text"
-                      size="small"
                       placeholder="e.g. Ahmedabad..."
                       {...field}
-                      error={!!errors?.city}
-                      helperText={errors?.city?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>State</FormLabel>
+                <Field.ErrorText>{errors?.city?.message}</Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.zip_postal_code}>
+                <Field.Label>State</Field.Label>
                 <Controller
                   name="zip_postal_code"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="number"
-                      size="small"
                       placeholder="e.g. 350021..."
                       {...field}
-                      error={!!errors?.zip_postal_code}
-                      helperText={errors?.zip_postal_code?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Address</FormLabel>
+                <Field.ErrorText>
+                  {errors?.zip_postal_code?.message}
+                </Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.address}>
+                <Field.Label>Address</Field.Label>
                 <Controller
                   name="address"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
-                      type="text"
-                      size="small"
-                      placeholder="Address"
-                      multiline
-                      {...field}
-                      error={!!errors?.address}
-                      helperText={errors?.address?.message}
-                    />
+                    <Input type="text" placeholder="Address" {...field} />
                   )}
                 />
-              </FormControl>
+                <Field.ErrorText>{errors?.address?.message}</Field.ErrorText>
+              </Field.Root>
             </div>
             <br />
 
-            <Typography variant="h6" sx={{fontSize: "1.2rem", mb:1.5, mt:1}} >Contact Information</Typography>
+            <Heading mb={4}>Contact Information</Heading>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Primary Email Address</FormLabel>
+              <Field.Root invalid={!!errors?.primary_email}>
+                <Field.Label>Primary Email Address</Field.Label>
                 <Controller
                   name="primary_email"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="email"
-                      size="small"
                       placeholder="e.g. xyz@gmail.com..."
                       {...field}
-                      error={!!errors?.primary_email}
-                      helperText={errors?.primary_email?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Alternate Email Address</FormLabel>
+                <Field.ErrorText>
+                  {errors?.primary_email?.message}
+                </Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.alternate_email}>
+                <Field.Label>Alternate Email Address</Field.Label>
                 <Controller
                   name="alternate_email"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="email"
-                      size="small"
                       placeholder="e.g. abc@gmail.com..."
                       {...field}
-                      error={!!errors?.alternate_email}
-                      helperText={errors?.alternate_email?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Notification Email</FormLabel>
+                <Field.ErrorText>
+                  {errors?.alternate_email?.message}
+                </Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.notification_email}>
+                <Field.Label>Notification Email</Field.Label>
                 <Controller
                   name="notification_email"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="email"
-                      size="small"
                       placeholder="e.g. abc@gmail.com..."
                       {...field}
-                      error={!!errors?.notification_email}
-                      helperText={errors?.notification_email?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Primary Contact Number</FormLabel>
+                <Field.ErrorText>
+                  {errors?.notification_email?.message}
+                </Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.primary_contact_number}>
+                <Field.Label>Primary Contact Number</Field.Label>
                 <Controller
                   name="primary_contact_number"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="number"
-                      size="small"
                       placeholder="Enter Contact Number"
                       {...field}
-                      error={!!errors?.primary_contact_number}
-                      helperText={errors?.primary_contact_number?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Alternate Contact Number</FormLabel>
+                <Field.ErrorText>
+                  {errors?.primary_contact_number?.message}
+                </Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.alternate_contact_number}>
+                <Field.Label>Alternate Contact Number</Field.Label>
                 <Controller
                   name="alternate_contact_number"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="number"
-                      size="small"
                       placeholder="Enter Alternate Contact Number"
                       {...field}
-                      error={!!errors?.alternate_contact_number}
-                      helperText={errors?.alternate_contact_number?.message}
                     />
                   )}
                 />
-              </FormControl>
+                <Field.ErrorText>
+                  {errors?.alternate_contact_number?.message}
+                </Field.ErrorText>
+              </Field.Root>
             </div>
             <br />
 
-            <Typography variant="h6" sx={{fontSize: "1.2rem", mb:1.5, mt:1}} >Business Details</Typography>
+            <Heading mb={4} style={{ fontSize: "1.2rem" }}>
+              Business Details
+            </Heading>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Primary Business Type</FormLabel>
+              <Field.Root invalid={!!errors?.primary_business_type}>
+                <Field.Label>Primary Business Type</Field.Label>
                 <Controller
                   name="primary_business_type"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="text"
-                      size="small"
                       placeholder="Enter Primary Business Type"
                       {...field}
-                      error={!!errors?.primary_business_type}
-                      helperText={errors?.primary_business_type?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Primary Business Category</FormLabel>
+                <Field.ErrorText>
+                  {errors?.primary_business_type?.message}
+                </Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.primary_business_category}>
+                <Field.Label>Primary Business Category</Field.Label>
                 <Controller
                   name="primary_business_category"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="text"
-                      size="small"
                       placeholder="Select Primary Business Category"
                       {...field}
-                      error={!!errors?.primary_business_category}
-                      helperText={errors?.primary_business_category?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Sub Category</FormLabel>
+                <Field.ErrorText>
+                  {errors?.primary_business_category?.message}
+                </Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.sub_category}>
+                <Field.Label>Sub Category</Field.Label>
                 <Controller
                   name="sub_category"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="text"
-                      size="small"
                       placeholder="Enter Sub Category"
                       {...field}
-                      error={!!errors?.sub_category}
-                      helperText={errors?.sub_category?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>PAN Number</FormLabel>
+                <Field.ErrorText>
+                  {errors?.sub_category?.message}
+                </Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.pan_number}>
+                <Field.Label>PAN Number</Field.Label>
                 <Controller
                   name="pan_number"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="text"
-                      size="small"
                       placeholder="Enter PAN Number"
                       {...field}
-                      error={!!errors?.pan_number}
-                      helperText={errors?.pan_number?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>GST Number</FormLabel>
+                <Field.ErrorText>{errors?.pan_number?.message}</Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.gst_number}>
+                <Field.Label>GST Number</Field.Label>
                 <Controller
                   name="gst_number"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
+                    <Input
                       type="text"
-                      size="small"
                       placeholder="Enter GST Number"
                       {...field}
-                      error={!!errors?.gst_number}
-                      helperText={errors?.gst_number?.message}
                     />
                   )}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>TRN Number</FormLabel>
+                <Field.ErrorText>{errors?.gst_number?.message}</Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.trn_number}>
+                <Field.Label>TRN Number</Field.Label>
                 <Controller
                   name="trn_number"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      variant="outlined"
-                      type="text"
-                      size="small"
-                      placeholder="TRN Number"
-                      {...field}
-                      error={!!errors?.trn_number}
-                      helperText={errors?.trn_number?.message}
-                    />
+                    <Input type="text" placeholder="TRN Number" {...field} />
                   )}
                 />
-              </FormControl>
+                <Field.ErrorText>{errors?.trn_number?.message}</Field.ErrorText>
+              </Field.Root>
             </div>
 
-            <Typography variant="h6" sx={{fontSize: "1.2rem", mb:1.5, mt:1}} >Documents</Typography>
+            <Heading mb={4}>Documents</Heading>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>PAN Certificate</FormLabel>
+              <Field.Root invalid={!!errors?.pan_card}>
+                <Field.Label>PAN Certificate</Field.Label>
                 <Controller
                   name="pan_card"
                   control={control}
-                  render={({ field }) => (
-                    <TextField
-                      variant="outlined"
-                      type="file"
-                      size="small"
-                      {...field}
-                      error={!!errors?.pan_card}
-                      helperText={errors?.pan_card?.message}
-                    />
-                  )}
+                  render={({ field }) => <Input type="file" {...field} />}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>GST Certificate</FormLabel>
+                <Field.ErrorText>{errors?.pan_card?.message}</Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.gst_certificate}>
+                <Field.Label>GST Certificate</Field.Label>
                 <Controller
                   name="gst_certificate"
                   control={control}
-                  render={({ field }) => (
-                    <TextField
-                      variant="outlined"
-                      type="file"
-                      size="small"
-                      {...field}
-                      error={!!errors?.gst_certificate}
-                      helperText={errors?.gst_certificate?.message}
-                    />
-                  )}
+                  render={({ field }) => <Input type="file" {...field} />}
                 />
-              </FormControl>
-              <FormControl fullWidth>
-                <FormLabel sx={{mb:0.5}}>Authority Letter</FormLabel>
+                <Field.ErrorText>
+                  {errors?.gst_certificate?.message}
+                </Field.ErrorText>
+              </Field.Root>
+              <Field.Root invalid={!!errors?.authority_letter}>
+                <Field.Label>Authority Letter</Field.Label>
                 <Controller
                   name="authority_letter"
                   control={control}
-                  render={({ field }) => (
-                    <TextField
-                      variant="outlined"
-                      type="file"
-                      size="small"
-                      {...field}
-                      error={!!errors?.authority_letter}
-                      helperText={errors?.authority_letter?.message}
-                    />
-                  )}
+                  render={({ field }) => <Input type="file" {...field} />}
                 />
-              </FormControl>
-            </div>  
+                <Field.ErrorText>
+                  {errors?.authority_letter?.message}
+                </Field.ErrorText>
+              </Field.Root>
+            </div>
           </div>
           <br />
           <div className="text-right">
-            {/* <Button variant="contained" type="submit">Save</Button> */}
-            <button type="submit">Save</button>
+            <Button variant="solid" type="submit">
+              Save
+            </Button>
           </div>
         </form>
-      </Paper>
+      </Box>
     </div>
   );
 };

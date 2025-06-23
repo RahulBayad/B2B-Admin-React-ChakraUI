@@ -1,4 +1,15 @@
-import { Box, Button, Card, Checkbox, Table } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Card,
+  Checkbox,
+  Input,
+  InputGroup,
+  Menu,
+  Portal,
+  Separator,
+  Table,
+} from "@chakra-ui/react";
 import {
   flexRender,
   getCoreRowModel,
@@ -83,32 +94,17 @@ export const DataTable = ({
   });
 
   const TableToolbar = useCallback(() => {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-    const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
-      setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
 
     return (
-      <div className="flex justify-end items-center gap-1 py-2 px-2">
-        <input
-          size="small"
-          startAdornment={<Search className="mr-2" size={14} />}
-          style={{
-            fontSize: 14,
-          }}
-        />
-        <Button
-          aria-controls={"visibility-menu"}
-          aria-haspopup="true"
-          onClick={handleOpen}
-        >
-          <ColumnsIcon style={{ fontSize: "18px" }} />
-        </Button>
+      <Box my={1} className="flex justify-end items-center gap-2 py-2 px-2">
+       
+        <InputGroup startElement={<Search style={{height: "15px", width: "15px"}}/>}>
+          <Input placeholder="Search..." size="sm"/>
+        </InputGroup>
+        {/* <Button height="40px" width="40px" variant="ghost" rounded="full">
+          <ColumnsIcon style={{ height: "16px", width: "16px" }} />
+        </Button> */}
+        
         {/* <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
@@ -133,16 +129,64 @@ export const DataTable = ({
             </MenuItem>
           ))}
         </Menu> */}
-        <Button>
-          <Import size={18} />
-        </Button>
-        <Button>
-          <Printer size={18} />
-        </Button>
+        <div className="flex">
+          <Menu.Root closeOnSelect={false}>
+            <Menu.Trigger asChild>
+              <Button height="40px" width="40px" variant="ghost" rounded="full">
+                <ColumnsIcon style={{ height: "16px", width: "16px" }} />
+              </Button>
+            </Menu.Trigger>
+            <Portal>
+              <Menu.Positioner>
+                <Menu.Content>
+                  <Menu.ItemGroup>
+                    <Menu.ItemGroupLabel>Table Columns</Menu.ItemGroupLabel>
+                    <Separator/>
+                    <Menu.Item>
+                      <Checkbox.Root
+                        checked={table.getIsAllColumnsVisible()}
+                        onChange={()=>table.toggleAllColumnsVisible()}
+                        size="sm"
+                      >
+                        <Checkbox.HiddenInput />
+                        <Checkbox.Control />
+                        <Checkbox.Label>
+                          All Columns
+                        </Checkbox.Label>
+                      </Checkbox.Root>
+                    </Menu.Item>
+                    {table.getAllColumns().map((column: ColumnDef, index: number) => (
+                    <Menu.Item asChild key={index}>
+                      <Checkbox.Root
+                        id={`visibility-${column.id}`}
+                        checked={column.getIsVisible()}
+                        onChange={column.getToggleVisibilityHandler()}
+                        size="sm"
+                      >
+                        <Checkbox.HiddenInput />
+                        <Checkbox.Control />
+                        <Checkbox.Label>
+                          {column?.columnDef?.header}
+                        </Checkbox.Label>
+                      </Checkbox.Root>
+                    </Menu.Item>
+                  ))}
+                  </Menu.ItemGroup>
+                </Menu.Content>
+              </Menu.Positioner>
+            </Portal>
+          </Menu.Root>
+          <Button height="40px" width="40px" variant="ghost" rounded="full">
+            <Import style={{ height: "16px", width: "16px" }} />
+          </Button>
+          <Button height="40px" width="40px" variant="ghost" rounded="full">
+            <Printer style={{ height: "16px", width: "16px" }} />
+          </Button>
+        </div>
         {/* {
           FilterDialog && <FilterDialog />
         } */}
-      </div>
+      </Box>
     );
   }, [columns]);
 
@@ -236,20 +280,17 @@ export const DataTable = ({
   // }, []);
 
   return (
-    <Card.Root
-      className="mt-1 grid overflow-auto p-2 border-2 "
-    >
+    <div style={{display: "grid"}}>
       <TableToolbar />
-      <Box>
+      <Box overflowX="auto">
         <Table.Root variant="outline" className="w-full whitespace-nowrap">
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id}>
                 {selectable && (
                   <Table.ColumnHeader className="sticky left-0 z-10">
-                  
-                    <Checkbox.Root 
-                      defaultChecked 
+                    <Checkbox.Root
+                      defaultChecked
                       checked={table.getIsAllRowsSelected()}
                       onChange={table.getToggleAllRowsSelectedHandler()}
                     >
@@ -274,7 +315,6 @@ export const DataTable = ({
                       right:
                         header.column.getIsPinned() === "right" ? 0 : undefined,
                       zIndex: 2,
-                      minWidth: "200px",
                     }}
                   >
                     <div className="flex justify-between items-center pr-1 table-header">
@@ -358,8 +398,8 @@ export const DataTable = ({
               <Table.Row key={row.id}>
                 {selectable && (
                   <Table.Cell className="sticky left-0 z-10 p-0">
-                    <Checkbox.Root 
-                      defaultChecked 
+                    <Checkbox.Root
+                      defaultChecked
                       checked={row.getIsSelected()}
                       onChange={row.getToggleSelectedHandler()}
                     >
@@ -393,6 +433,6 @@ export const DataTable = ({
           </Table.Body>
         </Table.Root>
       </Box>
-    </Card.Root>
+    </div>
   );
 };
