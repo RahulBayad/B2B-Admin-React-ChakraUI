@@ -99,7 +99,7 @@ export const DataTable = ({
       <Box mt={2} mb={1} className="flex justify-end items-center gap-2 py-2 px-2">
        
         <InputGroup startElement={<Search style={{height: "15px", width: "15px"}}/>}>
-          <Input placeholder="Search..." size="sm"/>
+          <Input placeholder="Search..."  size="sm"/>
         </InputGroup>
         {/* <Button height="40px" width="40px" variant="ghost" rounded="full">
           <ColumnsIcon style={{ height: "16px", width: "16px" }} />
@@ -145,7 +145,7 @@ export const DataTable = ({
                     <Menu.Item>
                       <Checkbox.Root
                         checked={table.getIsAllColumnsVisible()}
-                        onChange={()=>table.toggleAllColumnsVisible()}
+                        onCheckedChange={table.getToggleAllColumnsVisibilityHandler()}
                         size="sm"
                       >
                         <Checkbox.HiddenInput />
@@ -155,12 +155,12 @@ export const DataTable = ({
                         </Checkbox.Label>
                       </Checkbox.Root>
                     </Menu.Item>
-                    {table.getAllColumns().map((column: ColumnDef, index: number) => (
+                    {table.getAllColumns().map((column, index: number) => (
                     <Menu.Item asChild key={index}>
                       <Checkbox.Root
                         id={`visibility-${column.id}`}
                         checked={column.getIsVisible()}
-                        onChange={column.getToggleVisibilityHandler()}
+                        onCheckedChange={()=>column.toggleVisibility()}
                         size="sm"
                       >
                         <Checkbox.HiddenInput />
@@ -183,9 +183,9 @@ export const DataTable = ({
             <Printer style={{ height: "16px", width: "16px" }} />
           </Button>
         </Box>
-        {/* {
+        {
           FilterDialog && <FilterDialog />
-        } */}
+        }
       </Box>
     );
   }, [columns]);
@@ -283,7 +283,7 @@ export const DataTable = ({
     <div style={{display: "grid"}}>
       <TableToolbar />
         <Box overflowX="auto">
-          <Table.Root variant="outline" className="w-full whitespace-nowrap">
+          <Table.Root variant="outline" className="w-full whitespace-nowrap" borderWidth="1px">
             <Table.Header>
               {table.getHeaderGroups().map((headerGroup) => (
                 <Table.Row key={headerGroup.id}>

@@ -1,12 +1,12 @@
-import { IconButton, type ButtonProps } from '@mui/material'
+import { Button, type ButtonProps } from '@chakra-ui/react'
 import { ListFilter } from 'lucide-react'
 
 const FilterButton = (props : ButtonProps) => {
     const { onClick } = props
     return (
-        <IconButton sx={{ p: 1.2 }} onClick={onClick}>
+        <Button onClick={onClick}>
             <ListFilter size={18} />
-        </IconButton>
+        </Button>
     )
 }
 
