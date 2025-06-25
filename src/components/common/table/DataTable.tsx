@@ -1,11 +1,14 @@
 import {
   Box,
   Button,
+  ButtonGroup,
   Card,
   Checkbox,
+  IconButton,
   Input,
   InputGroup,
   Menu,
+  Pagination,
   Portal,
   Separator,
   Table,
@@ -38,6 +41,7 @@ import React, {
   type JSX,
   type ReactElement,
 } from "react";
+import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
 type DataTableProps = {
   data: unknown[];
@@ -94,17 +98,21 @@ export const DataTable = ({
   });
 
   const TableToolbar = useCallback(() => {
-
     return (
-      <Box mt={2} mb={1} className="flex justify-end items-center gap-2 py-2 px-2">
-       
-        <InputGroup startElement={<Search style={{height: "15px", width: "15px"}}/>}>
-          <Input placeholder="Search..."  size="sm"/>
+      <Box
+        mt={3}
+        mb={2}
+        className="flex justify-end items-center gap-2 py-2 px-2"
+      >
+        <InputGroup
+          startElement={<Search style={{ height: "15px", width: "15px" }} />}
+        >
+          <Input placeholder="Search..." size="sm" />
         </InputGroup>
         {/* <Button height="40px" width="40px" variant="ghost" rounded="full">
           <ColumnsIcon style={{ height: "16px", width: "16px" }} />
         </Button> */}
-        
+
         {/* <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
@@ -129,19 +137,24 @@ export const DataTable = ({
             </MenuItem>
           ))}
         </Menu> */}
-        <Box  className="flex gap-1" >
+        <Box className="flex gap-1">
           <Menu.Root closeOnSelect={false}>
-            <Menu.Trigger asChild >
-              <Button variant="outline" rounded="md" size="sm" aspectRatio="square">
+            <Menu.Trigger asChild>
+              <Button
+                variant="outline"
+                rounded="md"
+                size="sm"
+                aspectRatio="square"
+              >
                 <ColumnsIcon style={{ height: "16px", width: "16px" }} />
               </Button>
             </Menu.Trigger>
-            <Portal >
+            <Portal>
               <Menu.Positioner width={200}>
                 <Menu.Content>
                   <Menu.ItemGroup>
                     <Menu.ItemGroupLabel>Table Columns</Menu.ItemGroupLabel>
-                    <Separator/>
+                    <Separator />
                     <Menu.Item>
                       <Checkbox.Root
                         checked={table.getIsAllColumnsVisible()}
@@ -150,42 +163,38 @@ export const DataTable = ({
                       >
                         <Checkbox.HiddenInput />
                         <Checkbox.Control />
-                        <Checkbox.Label>
-                          All Columns
-                        </Checkbox.Label>
+                        <Checkbox.Label>All Columns</Checkbox.Label>
                       </Checkbox.Root>
                     </Menu.Item>
                     {table.getAllColumns().map((column, index: number) => (
-                    <Menu.Item asChild key={index}>
-                      <Checkbox.Root
-                        id={`visibility-${column.id}`}
-                        checked={column.getIsVisible()}
-                        onCheckedChange={()=>column.toggleVisibility()}
-                        size="sm"
-                      >
-                        <Checkbox.HiddenInput />
-                        <Checkbox.Control />
-                        <Checkbox.Label>
-                          {column?.columnDef?.header}
-                        </Checkbox.Label>
-                      </Checkbox.Root>
-                    </Menu.Item>
-                  ))}
+                      <Menu.Item asChild key={index}>
+                        <Checkbox.Root
+                          id={`visibility-${column.id}`}
+                          checked={column.getIsVisible()}
+                          onCheckedChange={() => column.toggleVisibility()}
+                          size="sm"
+                        >
+                          <Checkbox.HiddenInput />
+                          <Checkbox.Control />
+                          <Checkbox.Label>
+                            {column?.columnDef?.header}
+                          </Checkbox.Label>
+                        </Checkbox.Root>
+                      </Menu.Item>
+                    ))}
                   </Menu.ItemGroup>
                 </Menu.Content>
               </Menu.Positioner>
             </Portal>
           </Menu.Root>
-          <Button variant="outline" rounded="md" size="sm" aspectRatio="square" >
+          <Button variant="outline" rounded="md" size="sm" aspectRatio="square">
             <Import style={{ height: "16px", width: "16px" }} />
           </Button>
           <Button variant="outline" rounded="md" size="sm" aspectRatio="square">
             <Printer style={{ height: "16px", width: "16px" }} />
           </Button>
         </Box>
-        {
-          FilterDialog && <FilterDialog />
-        }
+        {FilterDialog && <FilterDialog />}
       </Box>
     );
   }, [columns]);
@@ -280,152 +289,180 @@ export const DataTable = ({
   // }, []);
 
   return (
-    <div style={{display: "grid"}}>
+    <div style={{ display: "grid" }}>
       <TableToolbar />
-        <Box overflowX="auto">
-          <Table.Root variant="outline" className="w-full whitespace-nowrap" borderWidth="1px">
-            <Table.Header>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <Table.Row key={headerGroup.id}>
-                  {selectable && (
-                    <Table.ColumnHeader className="sticky left-0 z-10">
-                      <Checkbox.Root
-                        checked={!!table.getIsAllRowsSelected()}
-                        onCheckedChange={()=>table.toggleAllRowsSelected()}
-                      >
-                        <Checkbox.HiddenInput />
-                        <Checkbox.Control />
-                      </Checkbox.Root>
-                    </Table.ColumnHeader>
-                  )}
-                  {headerGroup.headers.map((header) => (
-                    <Table.ColumnHeader
-                      key={header.id}
-                      style={{
-                        position: header.column.getIsPinned()
-                          ? "sticky"
-                          : "static",
-                        left:
-                          header.column.getIsPinned() === "left"
-                            ? selectable
-                              ? 54
-                              : 0
-                            : undefined,
-                        right:
-                          header.column.getIsPinned() === "right" ? 0 : undefined,
-                        zIndex: 2,
-                      }}
+      <Box overflowX="auto">
+        <Table.Root
+          bgColor={{ base: "white", _dark: "blackAlpha.300" }}
+          variant="outline"
+          className="w-full whitespace-nowrap"
+          borderWidth="1px"
+        >
+          <Table.Header>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Table.Row key={headerGroup.id}>
+                {selectable && (
+                  <Table.ColumnHeader className="sticky left-0 z-10">
+                    <Checkbox.Root
+                      checked={!!table.getIsAllRowsSelected()}
+                      onCheckedChange={() => table.toggleAllRowsSelected()}
                     >
-                      <div className="flex justify-between items-center pr-1 table-header">
-                        <span className="flex gap-1 items-center">
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                      <Checkbox.HiddenInput />
+                      <Checkbox.Control />
+                    </Checkbox.Root>
+                  </Table.ColumnHeader>
+                )}
+                {headerGroup.headers.map((header) => (
+                  <Table.ColumnHeader
+                    key={header.id}
+                    style={{
+                      position: header.column.getIsPinned()
+                        ? "sticky"
+                        : "static",
+                      left:
+                        header.column.getIsPinned() === "left"
+                          ? selectable
+                            ? 54
+                            : 0
+                          : undefined,
+                      right:
+                        header.column.getIsPinned() === "right" ? 0 : undefined,
+                      zIndex: 2,
+                    }}
+                  >
+                    <div className="flex justify-between items-center pr-1 table-header">
+                      <span className="flex gap-1 items-center">
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        <Button
+                          onClick={() =>
+                            header.column.pin(
+                              header.column.getIsPinned() ? false : "left"
+                            )
+                          }
+                          style={{
+                            minWidth: "auto",
+                            height: "30px",
+                            width: "30px",
+                            borderRadius: "1000px",
+                            display: header.column.getIsPinned()
+                              ? "initial"
+                              : "none",
+                          }}
+                        >
+                          <PinIcon
+                            style={{
+                              width: "16px",
+                              height: "16px",
+                              color: "gray",
+                              minWidth: "auto",
+                            }}
+                          />
+                        </Button>
+                        {header.column.getIsSorted() === "asc" ? (
                           <Button
-                            onClick={() =>
-                              header.column.pin(
-                                header.column.getIsPinned() ? false : "left"
-                              )
-                            }
                             style={{
                               minWidth: "auto",
                               height: "30px",
                               width: "30px",
                               borderRadius: "1000px",
-                              display: header.column.getIsPinned()
-                                ? "initial"
-                                : "none",
                             }}
+                            // onClick={() => table.setSorting(prev => prev.filter(col => col.id !== header.column.columnDef?.accessorKey))}
+                            onClick={() => header.column.toggleSorting()}
                           >
-                            <PinIcon
-                              style={{
-                                width: "16px",
-                                height: "16px",
-                                color: "gray",
-                                minWidth: "auto",
-                              }}
+                            <ArrowUpIcon
+                              style={{ width: "16px", p: 0, color: "gray" }}
                             />
                           </Button>
-                          {header.column.getIsSorted() === "asc" ? (
-                            <Button
-                              style={{
-                                minWidth: "auto",
-                                height: "30px",
-                                width: "30px",
-                                borderRadius: "1000px",
-                              }}
-                              // onClick={() => table.setSorting(prev => prev.filter(col => col.id !== header.column.columnDef?.accessorKey))}
-                              onClick={() => header.column.toggleSorting()}
-                            >
-                              <ArrowUpIcon
-                                style={{ width: "16px", p: 0, color: "gray" }}
-                              />
-                            </Button>
-                          ) : header.column.getIsSorted() === "desc" ? (
-                            <Button
-                              style={{
-                                minWidth: "auto",
-                                height: "30px",
-                                width: "30px",
-                                borderRadius: "1000px",
-                              }}
-                              onClick={() => header.column.toggleSorting()}
-                            >
-                              <ArrowDown
-                                style={{ width: "16px", p: 0, color: "gray" }}
-                              />
-                            </Button>
-                          ) : (
-                            ""
-                          )}
-                        </span>
-                        {/* <TableHeaderMenu header={header} /> */}
-                      </div>
-                    </Table.ColumnHeader>
-                  ))}
-                </Table.Row>
-              ))}
-            </Table.Header>
-            <Table.Body>
-              {table.getPaginationRowModel().rows.map((row) => (
-                <Table.Row key={row.id}>
-                  {selectable && (
-                    <Table.Cell className="sticky left-0 z-10 p-0">
-                      <Checkbox.Root
-                        checked={!!row.getIsSelected()}
-                        onCheckedChange={()=>row.toggleSelected()}
-                      >
-                        <Checkbox.HiddenInput />
-                        <Checkbox.Control />
-                      </Checkbox.Root>
-                    </Table.Cell>
-                  )}
-                  {row.getVisibleCells().map((cell) => (
-                    <Table.Cell
-                      key={cell.id}
-                      style={{
-                        position: cell.column.getIsPinned() ? "sticky" : "static",
-                        left:
-                          cell.column.getIsPinned() === "left"
-                            ? selectable
-                              ? 54
-                              : 0
-                            : undefined,
-                        right:
-                          cell.column.getIsPinned() === "right" ? 0 : undefined,
-                        zIndex: 10,
-                        fontSize: 13,
-                      }}
+                        ) : header.column.getIsSorted() === "desc" ? (
+                          <Button
+                            style={{
+                              minWidth: "auto",
+                              height: "30px",
+                              width: "30px",
+                              borderRadius: "1000px",
+                            }}
+                            onClick={() => header.column.toggleSorting()}
+                          >
+                            <ArrowDown
+                              style={{ width: "16px", p: 0, color: "gray" }}
+                            />
+                          </Button>
+                        ) : (
+                          ""
+                        )}
+                      </span>
+                      {/* <TableHeaderMenu header={header} /> */}
+                    </div>
+                  </Table.ColumnHeader>
+                ))}
+              </Table.Row>
+            ))}
+          </Table.Header>
+          <Table.Body>
+            {table.getPaginationRowModel().rows.map((row) => (
+              <Table.Row key={row.id}>
+                {selectable && (
+                  <Table.Cell className="sticky left-0 z-10 p-0">
+                    <Checkbox.Root
+                      checked={!!row.getIsSelected()}
+                      onCheckedChange={() => row.toggleSelected()}
                     >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </Table.Cell>
-                  ))}
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table.Root>
-        </Box>
+                      <Checkbox.HiddenInput />
+                      <Checkbox.Control />
+                    </Checkbox.Root>
+                  </Table.Cell>
+                )}
+                {row.getVisibleCells().map((cell) => (
+                  <Table.Cell
+                    key={cell.id}
+                    style={{
+                      position: cell.column.getIsPinned() ? "sticky" : "static",
+                      left:
+                        cell.column.getIsPinned() === "left"
+                          ? selectable
+                            ? 54
+                            : 0
+                          : undefined,
+                      right:
+                        cell.column.getIsPinned() === "right" ? 0 : undefined,
+                      zIndex: 10,
+                      fontSize: 13,
+                    }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+        <Pagination.Root count={data.length} pageSize={pagination.pageSize} defaultPage={1}>
+          <ButtonGroup variant="ghost" size="sm">
+            <Pagination.PrevTrigger asChild>
+              <IconButton>
+                <LuChevronLeft />
+              </IconButton>
+            </Pagination.PrevTrigger>
+
+            <Pagination.Items
+              render={(page) => (
+                <IconButton variant={{ base: "ghost", _selected: "outline" }} onClick={()=>table.setPageIndex(page.value)}>
+                  {page.value}
+                </IconButton>
+              )}
+            />
+
+            <Pagination.NextTrigger asChild>
+              <IconButton>
+                <LuChevronRight />
+              </IconButton>
+            </Pagination.NextTrigger>
+          </ButtonGroup>
+        </Pagination.Root>
+      </Box>
     </div>
   );
 };

@@ -132,7 +132,7 @@ const Header = () => {
   ];
 
   return (
-    <Box borderBottomWidth="1px" p="10px"  className="border-b border-gray-200">
+    <Box borderBottomWidth="1px" p="10px" bgColor={{base: "white", _dark: "blackAlpha.300"}} className="border-b border-gray-200">
       <div className="flex justify-between items-center">
         {/* <Avatar src="/vite.svg" /> */}
         <Heading>Vite Admin</Heading>

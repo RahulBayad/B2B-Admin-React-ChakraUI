@@ -21,14 +21,13 @@ const buttonRecipe = defineRecipe({
           bg: "primary.600",
         },
       },
-      // outline: {
-      //   border: "1px solid",
-      //   borderColor: "primary.500",
-      //   color: "primary.500",
-      //   _hover: {
-      //     bg: "primary.50",
-      //   },
-      // },
+      outline: {
+        bgColor : "white",
+        _dark : {
+          bg : "blackAlpha.300"
+        }
+      },
+      
     },
   },
 });

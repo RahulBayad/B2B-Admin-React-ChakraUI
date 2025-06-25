@@ -141,12 +141,12 @@ const Sidebar = () => {
             <Button 
               width="100%" 
               variant="ghost"
-              borderRadius={0} 
+              fontWeight={400} 
               padding="0 10px"
               justifyContent="start"
               alignItems="center"
             >
-             {Icon && <Icon size={18} />} 
+             {Icon && <Icon size={18} className="stroke-[1.5]"/>} 
              {title}
             </Button>
           </NavLink>
@@ -155,12 +155,12 @@ const Sidebar = () => {
               onClick={() => toggleSubMenu()}
               width="100%"
               variant="ghost"
-              borderRadius={0}
+              fontWeight={400}
               padding="0 10px"
               justifyContent="start"
               alignItems="center"
             >
-              {Icon && <Icon size={18} />}
+              {Icon && <Icon size={18} className="stroke-[1.5]"/>}
               {title}
               <ChevronDown 
                 style={{height: "15px", width:"15px"}}
@@ -182,7 +182,7 @@ const Sidebar = () => {
                   <Button 
                     variant="ghost"
                     width="100%" 
-                    borderRadius={0}
+                    fontWeight={400}
                     padding="0 10px"
                     textAlign="left"
                     justifyContent="start"
@@ -201,7 +201,7 @@ const Sidebar = () => {
   };
 
   return (
-    <Box borderRightWidth={1} className="text-sm min-w-[220px] min-h-full overflow-y-auto overflow-x-hidden">
+    <Box borderRightWidth={1} px={2} className="text-sm min-w-[220px] min-h-full overflow-y-auto overflow-x-hidden">
       <figure style={{padding: "10px 0"}} className="flex justify-center">
         <img src="/vite.svg" className="w-20" />
       </figure>

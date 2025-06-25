@@ -6,12 +6,16 @@ import {
 import { Link } from "react-router";
 import {
   Button,
+  Card,
   createListCollection,
   Dialog,
   Field,
+  Heading,
   NativeSelect,
   Portal,
   Select,
+  VStack,
+  type ListCollection,
 } from "@chakra-ui/react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
@@ -75,7 +79,158 @@ const companyTableData: CompanyTable[] = [
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
   },
+  {
+    id: 6,
+    name: "MNO Enterprise",
+    gst: "231HKV0482KD",
+    pan: "HKV0482KD",
+    owner: "Ben Stokes",
+    email: "benstokes123@gmail.com",
+    mobile: "+41 8694562165",
+  },
+  {
+    id: 7,
+    name: "MNO Enterprise",
+    gst: "231HKV0482KD",
+    pan: "HKV0482KD",
+    owner: "Ben Stokes",
+    email: "benstokes123@gmail.com",
+    mobile: "+41 8694562165",
+  },
+  {
+    id: 8,
+    name: "MNO Enterprise",
+    gst: "231HKV0482KD",
+    pan: "HKV0482KD",
+    owner: "Ben Stokes",
+    email: "benstokes123@gmail.com",
+    mobile: "+41 8694562165",
+  },
+  {
+    id: 9,
+    name: "MNO Enterprise",
+    gst: "231HKV0482KD",
+    pan: "HKV0482KD",
+    owner: "Ben Stokes",
+    email: "benstokes123@gmail.com",
+    mobile: "+41 8694562165",
+  },
+  {
+    id: 10,
+    name: "MNO Enterprise",
+    gst: "231HKV0482KD",
+    pan: "HKV0482KD",
+    owner: "Ben Stokes",
+    email: "benstokes123@gmail.com",
+    mobile: "+41 8694562165",
+  },
+  {
+    id:11,
+    name: "MNO Enterprise",
+    gst: "231HKV0482KD",
+    pan: "HKV0482KD",
+    owner: "Ben Stokes",
+    email: "benstokes123@gmail.com",
+    mobile: "+41 8694562165",
+  },
 ];
+
+const filterOptions = {
+  businessType: createListCollection({
+    items: [
+      { value: "retail", label: "Retail" },
+      { value: "technology", label: "Technology" },
+      { value: "healthcare", label: "Healthcare" },
+      { value: "finance", label: "Finance" },
+    ],
+  }),
+  status: createListCollection({
+    items: [
+      { value: "active", label: "Active" },
+      { value: "inactive", label: "Inactive" },
+      { value: "pending", label: "Pending" },
+      { value: "suspended", label: "Suspended" },
+    ],
+  }),
+  companyType: createListCollection({
+    items: [
+      { value: "llc", label: "LLC" },
+      { value: "corporation", label: "Corporation" },
+      { value: "partnership", label: "Partnership" },
+      { value: "sole", label: "Sole Proprietorship" },
+    ],
+  }),
+  continent: createListCollection({
+    items: [
+      { value: "africa", label: "Africa" },
+      { value: "asia", label: "Asia" },
+      { value: "australia", label: "Australia" },
+      { value: "europe", label: "Europe" },
+      { value: "north_america", label: "North America" },
+      { value: "south_america", label: "South America" },
+    ],
+  }),
+  country: createListCollection({
+    items: [
+      { value: "usa", label: "USA" },
+      { value: "canada", label: "Canada" },
+      { value: "uk", label: "UK" },
+      { value: "india", label: "India" },
+    ],
+  }),
+  state: createListCollection({
+    items: [
+      { value: "california", label: "California" },
+      { value: "new_york", label: "New York" },
+      { value: "texas", label: "Texas" },
+      { value: "florida", label: "Florida" },
+    ],
+  }),
+  city: createListCollection({
+    items: [
+      { value: "new_york", label: "New York" },
+      { value: "los_angeles", label: "Los Angeles" },
+      { value: "london", label: "London" },
+      { value: "mumbai", label: "Mumbai" },
+    ],
+  }),
+  interested: createListCollection({
+    items: [
+      { value: "product_a", label: "Product A" },
+      { value: "product_b", label: "Product B" },
+      { value: "service_a", label: "Service A" },
+      { value: "service_b", label: "Service B" },
+    ],
+  }),
+  brand: createListCollection({
+    items: [
+      { value: "brand_x", label: "Brand X" },
+      { value: "brand_y", label: "Brand Y" },
+      { value: "brand_z", label: "Brand Z" },
+    ],
+  }),
+  category: createListCollection({
+    items: [
+      { value: "electronics", label: "Electronics" },
+      { value: "fashion", label: "Fashion" },
+      { value: "food", label: "Food" },
+      { value: "health", label: "Health" },
+    ],
+  }),
+  kyc_verified: createListCollection({
+    items: [
+      { value: "verified", label: "Verified" },
+      { value: "not_verified", label: "Not Verified" },
+      { value: "pending", label: "Pending" },
+    ],
+  }),
+  enable_billing: createListCollection({
+    items: [
+      { value: "enabled", label: "Enabled" },
+      { value: "disabled", label: "Disabled" },
+    ],
+  }),
+};
 
 const FilterDialog: JSX.Element = () => {
   const filterSchema = z.object({
@@ -95,7 +250,12 @@ const FilterDialog: JSX.Element = () => {
   });
   type FilterFormSchema = z.infer<typeof filterSchema>;
 
-  const { control, handleSubmit, reset } = useForm<FilterFormSchema>({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FilterFormSchema>({
     resolver: zodResolver(filterSchema),
     defaultValues: {
       status: [],
@@ -114,14 +274,50 @@ const FilterDialog: JSX.Element = () => {
     },
   });
 
-  const frameworks = createListCollection({
-    items: [
-      { label: "React.js", value: "react" },
-      { label: "Vue.js", value: "vue" },
-      { label: "Angular", value: "angular" },
-      { label: "Svelte", value: "svelte" },
-    ],
-  });
+  const renderMultiSelect = (
+    name: keyof FilterFormSchema,
+    label: string,
+    items: ListCollection<{ value: string; label: string }>
+  ) => (
+    <Field.Root>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <Select.Root
+            multiple
+            collection={items}
+            size="sm"
+            value={(field.value as string[]) || []}
+            onValueChange={(details) => field.onChange(details.value)}
+          >
+            <Select.HiddenSelect />
+            <Select.Label>{label}</Select.Label>
+            <Select.Control>
+              <Select.Trigger>
+                <Select.ValueText placeholder={`Select ${label}`} />
+              </Select.Trigger>
+              <Select.IndicatorGroup>
+                <Select.ClearTrigger />
+                <Select.Indicator />
+              </Select.IndicatorGroup>
+            </Select.Control>
+            <Select.Positioner>
+              <Select.Content>
+                {items.items.map((item) => (
+                  <Select.Item item={item} key={item.value}>
+                    {item.label}
+                    <Select.ItemIndicator />
+                  </Select.Item>
+                ))}
+              </Select.Content>
+            </Select.Positioner>
+          </Select.Root>
+        )}
+      />
+      <Field.ErrorText>{errors[name]?.message}</Field.ErrorText>
+    </Field.Root>
+  );
 
   const submitHandler: SubmitHandler<FilterFormSchema> = (data) => {
     console.log("form data", data);
@@ -134,330 +330,70 @@ const FilterDialog: JSX.Element = () => {
         </Dialog.Trigger>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content>
+          <Dialog.Content maxWidth={800}>
             <Dialog.CloseTrigger />
             <Dialog.Header>
-              <Dialog.Title>Filter Company</Dialog.Title>
+              <Dialog.Title>Filters</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
-              <form onSubmit={handleSubmit(submitHandler)}>
-                <div className="grid grid-cols-2 gap-4">
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <Field.Root>
-                        <Field.Label>Status</Field.Label>
-                        <Select.Root
-                          multiple
-                          collection={frameworks}
-                          value={field.value || []}
-                          onChange={field.onChange}
-                          size="sm"
-                          width="320px"
-                        >
-                          <Select.HiddenSelect />
-                          <Select.Label>Select framework</Select.Label>
-                          <Select.Control>
-                            <Select.Trigger>
-                              <Select.ValueText placeholder="Select framework" />
-                            </Select.Trigger>
-                            <Select.IndicatorGroup>
-                              <Select.Indicator />
-                            </Select.IndicatorGroup>
-                          </Select.Control>
-                          <Portal>
-                            <Select.Positioner>
-                              <Select.Content zIndex={1500}>
-                                {frameworks.items.map((framework) => (
-                                  <Select.Item
-                                    item={framework}
-                                    key={framework.value}
-                                  >
-                                    {framework.label}
-                                    <Select.ItemIndicator />
-                                  </Select.Item>
-                                ))}
-                              </Select.Content>
-                            </Select.Positioner>
-                          </Portal>
-                        </Select.Root>
-                      </Field.Root>
-                    )}
-                  />
-                  {/* <Controller
-                    name="businessType"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel size="small">Business Type</InputLabel>
-                        <Select
-                          multiple
-                          //  variant='standard'
-                          label="Business Type"
-                          size="small"
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        >
-                          <MenuItem value="Wholesale">Wholesale</MenuItem>
-                          <MenuItem value="Retail">Retail</MenuItem>
-                          <MenuItem value="Private Limited">
-                            Private Limited
-                          </MenuItem>
-                          <MenuItem value="Enterprise">Enterprise</MenuItem>
-                          <MenuItem value="B2B">B2B</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                  <Controller
-                    name="companyType"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel size="small">Company Type</InputLabel>
-                        <Select
-                          label="Company Type"
-                          //  variant='standard'
-                          size="small"
-                          multiple
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        >
-                          <MenuItem value="Wholesale">Wholesale</MenuItem>
-                          <MenuItem value="Retail">Retail</MenuItem>
-                          <MenuItem value="Private Limited">
-                            Private Limited
-                          </MenuItem>
-                          <MenuItem value="Enterprise">Enterprise</MenuItem>
-                          <MenuItem value="B2B">B2B</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                  <Controller
-                    name="continent"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel size="small">Continent</InputLabel>
-                        <Select
-                          //  variant='standard'
-                          label="Continent"
-                          size="small"
-                          multiple
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        >
-                          <MenuItem value="Wholesale">Wholesale</MenuItem>
-                          <MenuItem value="Retail">Retail</MenuItem>
-                          <MenuItem value="Private Limited">
-                            Private Limited
-                          </MenuItem>
-                          <MenuItem value="Enterprise">Enterprise</MenuItem>
-                          <MenuItem value="B2B">B2B</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                  <Controller
-                    name="country"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel size="small">Country</InputLabel>
-                        <Select
-                          //  variant='standard'
-                          label="Country"
-                          size="small"
-                          multiple
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        >
-                          <MenuItem value="Wholesale">Wholesale</MenuItem>
-                          <MenuItem value="Retail">Retail</MenuItem>
-                          <MenuItem value="Private Limited">
-                            Private Limited
-                          </MenuItem>
-                          <MenuItem value="Enterprise">Enterprise</MenuItem>
-                          <MenuItem value="B2B">B2B</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                  <Controller
-                    name="state"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel size="small">State</InputLabel>
-                        <Select
-                          //  variant='standard'
-                          label="State"
-                          size="small"
-                          multiple
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        >
-                          <MenuItem value="Wholesale">Wholesale</MenuItem>
-                          <MenuItem value="Retail">Retail</MenuItem>
-                          <MenuItem value="Private Limited">
-                            Private Limited
-                          </MenuItem>
-                          <MenuItem value="Enterprise">Enterprise</MenuItem>
-                          <MenuItem value="B2B">B2B</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                  <Controller
-                    name="city"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel size="small">City</InputLabel>
-                        <Select
-                          //  variant='standard'
-                          label="City"
-                          size="small"
-                          multiple
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        >
-                          <MenuItem value="Wholesale">Wholesale</MenuItem>
-                          <MenuItem value="Retail">Retail</MenuItem>
-                          <MenuItem value="Private Limited">
-                            Private Limited
-                          </MenuItem>
-                          <MenuItem value="Enterprise">Enterprise</MenuItem>
-                          <MenuItem value="B2B">B2B</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                  <Controller
-                    name="interested"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel size="small">Interested In</InputLabel>
-                        <Select
-                          //  variant='standard'
-                          label="Interested In"
-                          size="small"
-                          multiple
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        >
-                          <MenuItem value="Wholesale">Wholesale</MenuItem>
-                          <MenuItem value="Retail">Retail</MenuItem>
-                          <MenuItem value="Private Limited">
-                            Private Limited
-                          </MenuItem>
-                          <MenuItem value="Enterprise">Enterprise</MenuItem>
-                          <MenuItem value="B2B">B2B</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                  <Controller
-                    name="brand"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel size="small">Brand</InputLabel>
-                        <Select
-                          //  variant='standard'
-                          label="Brand"
-                          size="small"
-                          multiple
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        >
-                          <MenuItem value="Wholesale">Wholesale</MenuItem>
-                          <MenuItem value="Retail">Retail</MenuItem>
-                          <MenuItem value="Private Limited">
-                            Private Limited
-                          </MenuItem>
-                          <MenuItem value="Enterprise">Enterprise</MenuItem>
-                          <MenuItem value="B2B">B2B</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                  <Controller
-                    name="category"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel size="small">Category</InputLabel>
-                        <Select
-                          //  variant='standard'
-                          label="Category"
-                          size="small"
-                          multiple
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        >
-                          <MenuItem value="">None</MenuItem>
-                          <MenuItem value="Wholesale">Wholesale</MenuItem>
-                          <MenuItem value="Retail">Retail</MenuItem>
-                          <MenuItem value="Private Limited">
-                            Private Limited
-                          </MenuItem>
-                          <MenuItem value="Enterprise">Enterprise</MenuItem>
-                          <MenuItem value="B2B">B2B</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                  <Controller
-                    name="kyc_verified"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel size="small">KYC Verified</InputLabel>
-                        <Select
-                          //  variant='standard'
-                          label="KYC Verified"
-                          size="small"
-                          multiple
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        >
-                          <MenuItem value="Yes">Yes</MenuItem>
-                          <MenuItem value="No">No</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                  <Controller
-                    name="enable_billing"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl fullWidth>
-                        <InputLabel size="small">Enable Billing</InputLabel>
-                        <Select
-                          label="Enable Billing"
-                          size="small"
-                          multiple
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        >
-                          <MenuItem value="Yes">Yes</MenuItem>
-                          <MenuItem value="No">No</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  /> */}
+              <form id="filterForm" onSubmit={handleSubmit(submitHandler)}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {renderMultiSelect(
+                    "businessType",
+                    "Business Type",
+                    filterOptions.businessType
+                  )}
+                  {renderMultiSelect("status", "Status", filterOptions.status)}
+                  {renderMultiSelect(
+                    "companyType",
+                    "Company Type",
+                    filterOptions.companyType
+                  )}
+                  {renderMultiSelect(
+                    "continent",
+                    "Continent",
+                    filterOptions.continent
+                  )}
+                  {renderMultiSelect(
+                    "country",
+                    "Country",
+                    filterOptions.country
+                  )}
+                  {renderMultiSelect("state", "State", filterOptions.state)}
+                  {renderMultiSelect("city", "City", filterOptions.city)}
+                  {renderMultiSelect(
+                    "interested",
+                    "Interested In",
+                    filterOptions.interested
+                  )}
+                  {renderMultiSelect("brand", "Brand", filterOptions.brand)}
+                  {renderMultiSelect(
+                    "category",
+                    "Category",
+                    filterOptions.category
+                  )}
+                  {renderMultiSelect(
+                    "kyc_verified",
+                    "KYC Verification",
+                    filterOptions.kyc_verified
+                  )}
+                  {renderMultiSelect(
+                    "enable_billing",
+                    "Billing Status",
+                    filterOptions.enable_billing
+                  )}
                 </div>
               </form>
             </Dialog.Body>
             <Dialog.Footer>
-              <Button >Cancel</Button>
-              <Button variant="solid" type="submit">
+              <Dialog.ActionTrigger asChild>
+                <Button variant="outline">Cancel</Button>
+              </Dialog.ActionTrigger>
+              <Dialog.ActionTrigger asChild>
+              <Button variant="solid" type="submit" form="filterForm">
                 Apply
               </Button>
+              </Dialog.ActionTrigger>
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog.Positioner>
@@ -470,16 +406,6 @@ const columns: TableColumnDef<CompanyTable>[] = [
   { accessorKey: "name", header: "Company", width: 150 },
   { accessorKey: "gst", header: "GST", width: 150 },
   { accessorKey: "pan", header: "PAN", width: 150 },
-  // {
-  //   accessorKey: "gst",
-  //   header: "Legal", width: 150,
-  //   cell: (params) => (
-  //     <div className='flex flex-col'>
-  //       <span>GST: {params.row.original.gst}</span>
-  //       <span>PAN: {params.row.original.pan}</span>
-  //     </div>
-  //   )
-  // },
   { accessorKey: "owner", header: "Owner Name", width: 150 },
   { accessorKey: "email", header: "Email", width: 150 },
   { accessorKey: "mobile", header: "Contact", width: 150 },
@@ -487,21 +413,23 @@ const columns: TableColumnDef<CompanyTable>[] = [
 
 const Company = () => {
   return (
-    <React.Fragment>
-      <div className="flex justify-between items-center mb-2">
-        <h1>Company</h1>
-        <Button size="xs">
-          <Link to={"/business-entities/companies/create"}>Add New</Link>
-        </Button>
-        {/* <Button size="xs"><Link to={"#"}>Add New</Link></Button> */}
-      </div>
-      <DataTable
-        columns={columns}
-        data={companyTableData}
-        FilterDialog={FilterDialog}
-        selectable
-      />
-    </React.Fragment>
+    <Card.Root borderRadius="lg" minHeight="full">
+      <Card.Body>
+        <div className="flex justify-between items-center mb-2">
+          <Heading size="lg">Company</Heading>
+          <Button size="xs">
+            <Link to={"/business-entities/companies/create"}>Add New</Link>
+          </Button>
+          {/* <Button size="xs"><Link to={"#"}>Add New</Link></Button> */}
+        </div>
+        <DataTable
+          columns={columns}
+          data={companyTableData}
+          FilterDialog={FilterDialog}
+          selectable
+        />
+      </Card.Body>
+    </Card.Root>
   );
 };
 
