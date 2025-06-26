@@ -4,7 +4,7 @@ import Sidebar from './Sidebar'
 import { Box } from '@chakra-ui/react'
 
 const Layout = () => {
-  
+  console.log("layout")
   return (
     <div className='h-screen w-screen overflow-hidden flex'>
       <Sidebar/>  

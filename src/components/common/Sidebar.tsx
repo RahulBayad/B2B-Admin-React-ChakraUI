@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import {
   Box as BoxIcon,
-  List as ListIcon,
   BookText,
   Landmark,
   BadgeIndianRupee,
@@ -11,27 +10,35 @@ import {
   Gauge,
   Dot,
   ChevronDown,
+  type LucideProps,
 } from "lucide-react";
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import { Box, Button } from "@chakra-ui/react";
 
 const Sidebar = () => {
-  const navMenu = [
+
+  // const location = useLocation()
+  const location = window.location.pathname
+  console.log("sidebr", location)
+
+  type NavTreeType = { 
+    title: string;
+    url: string;
+    icon?: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
+    subMenu? : NavTreeType[]
+  };
+
+  const navTree:NavTreeType[] = [
     {
       title: "Dashboard",
       url: "/",
       icon: Gauge,
-      // items: [
-      //   { title: "Dashboard Home", url: "/" },
-      //   { title: "Analytics / Reports", url: "/analytics-reports" },
-      //   { title: "Trends", url: "/trends" },
-      // ],
     },
     {
       title: "Business",
       url: "/business-entities",
       icon: Landmark,
-      items: [
+      subMenu: [
         { title: "Companies", url: "/companies" },
         { title: "Members", url: "/members" },
         { title: "Partners", url: "/partners" },
@@ -43,7 +50,7 @@ const Sidebar = () => {
       title: "Product Management",
       url: "/product-management",
       icon: BoxIcon,
-      items: [
+      subMenu: [
         { title: "Brands", url: "/brands" },
         { title: "Categories & Subcategories", url: "/categories" },
         { title: "Products", url: "/products" },
@@ -53,7 +60,7 @@ const Sidebar = () => {
       title: "Sales & Marketing",
       url: "/sales-marketing",
       icon: BadgeIndianRupee,
-      items: [
+      subMenu: [
         { title: "Wall Listings", url: "/wall-listing" },
         { title: "Opportunities", url: "/opportunities" },
         { title: "Offers & Demands", url: "/offers-demands" },
@@ -69,7 +76,7 @@ const Sidebar = () => {
       title: "HR & Employees",
       url: "/hr-employees",
       icon: Users,
-      items: [
+      subMenu: [
         { title: "Employee Directory", url: "/employees" },
         { title: "Designations", url: "/designation" },
         { title: "Departments", url: "/department" },
@@ -83,7 +90,7 @@ const Sidebar = () => {
       title: "Web Settings",
       url: "/web-settings",
       icon: MonitorCog,
-      items: [
+      subMenu: [
         { title: "Home Categories", url: "/home-category-image" },
         { title: "Trending Images", url: "/trending-image" },
         { title: "Carousels", url: "/trending-carousel" },
@@ -95,7 +102,7 @@ const Sidebar = () => {
       title: "Admin Settings",
       url: "/admin-settings",
       icon: Settings,
-      items: [
+      subMenu: [
         { title: "Company Profile", url: "/company-profile" },
         { title: "Global Settings", url: "/global-settings" },
         { title: "Domain Management", url: "/domain-management" },
@@ -106,7 +113,7 @@ const Sidebar = () => {
       title: "System Tools",
       url: "/system-tools",
       icon: Settings,
-      items: [
+      subMenu: [
         { title: "Form Builder", url: "/form-builder" },
         { title: "Row Data", url: "/row-data" },
         { title: "Bug Reports", url: "/bug-report" },
@@ -117,7 +124,7 @@ const Sidebar = () => {
       title: "Master Data",
       url: "/master",
       icon: BookText,
-      items: [
+      subMenu: [
         { title: "Document Types", url: "/document-type" },
         { title: "Payment Terms", url: "/payment-terms" },
         { title: "Currency", url: "/currency" },
@@ -131,11 +138,13 @@ const Sidebar = () => {
     },
   ];
 
-  const SidebarItem = ({ title, url, icon: Icon, subMenu }) => {
+  // Sidebar Items 
+  const SidebarItem = ({ title, url, icon: Icon, subMenu }: NavTreeType) => {
     const [subMenuOpen, setSubMenuOpen] = useState(false);
     const toggleSubMenu = () => setSubMenuOpen((prev) => !prev);
     return (
       <div className="relative">
+        {/* If there is no submenu  */}
         {!subMenu ? (
           <NavLink to={url ? url : "#"}>
             <Button 
@@ -145,6 +154,8 @@ const Sidebar = () => {
               padding="0 10px"
               justifyContent="start"
               alignItems="center"
+              color="white"
+              _hover={{ bg: "blue.900"}}
             >
              {Icon && <Icon size={18} className="stroke-[1.5]"/>} 
              {title}
@@ -159,6 +170,11 @@ const Sidebar = () => {
               padding="0 10px"
               justifyContent="start"
               alignItems="center"
+              color="white"
+              _hover={{
+                bg: location?.pathname?.includes(url) ? "blue.800" : "blue.900",
+              }}
+              bg={location?.pathname?.includes(url) ? "blue.800" : "" }
             >
               {Icon && <Icon size={18} className="stroke-[1.5]"/>}
               {title}
@@ -170,6 +186,7 @@ const Sidebar = () => {
             </Button>
 
         )}
+        {/* Submenu  */}
         { subMenu && 
           <div
             className={`flex flex-col duration-200 ease-linear transition-all overflow-hidden ${
@@ -182,11 +199,15 @@ const Sidebar = () => {
                   <Button 
                     variant="ghost"
                     width="100%" 
-                    fontWeight={400}
                     padding="0 10px"
                     textAlign="left"
                     justifyContent="start"
                     alignItems="center"
+                    _hover={{
+                      bg: location?.pathname?.includes(url + item.url) ? "blue.900" : "blue.900",
+                    }}
+                    fontWeight={location?.pathname?.includes(url + item.url) ? "600" : "400" }
+                    color={location?.pathname?.includes(url + item.url) ? "white" : "gray.300" }
                   >
                     <Dot/>
                     {item.title}
@@ -201,17 +222,17 @@ const Sidebar = () => {
   };
 
   return (
-    <Box borderRightWidth={1} px={2} className="text-sm min-w-[220px] min-h-full overflow-y-auto overflow-x-hidden">
+    <Box borderRightWidth={1} px={2} backgroundColor="blue.950" className="text-sm min-w-[240px] min-h-full overflow-y-auto overflow-x-hidden">
       <figure style={{padding: "10px 0"}} className="flex justify-center">
         <img src="/vite.svg" className="w-20" />
       </figure>
-      {navMenu.map((nav, index) => (
+      {navTree.map((nav, index) => (
         <div key={index} className="">
           <SidebarItem
             url={nav.url}
             title={nav.title}
             icon={nav.icon}
-            subMenu={nav.items}
+            subMenu={nav.subMenu}
           />
         </div>
       ))}
@@ -219,4 +240,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default memo(Sidebar);

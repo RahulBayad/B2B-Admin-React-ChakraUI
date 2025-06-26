@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DataTable, type TableColumnDef } from "../../../components/common/table/DataTable.js";
+import { DataTable, type TableColumnDef } from "../../../components/ui/table/DataTable.js";
 import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 import { countries } from "../../../countries.js";
 

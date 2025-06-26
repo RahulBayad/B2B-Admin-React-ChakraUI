@@ -2,7 +2,7 @@ import React, { useState, type JSX, type ReactElement } from "react";
 import {
   DataTable,
   type TableColumnDef,
-} from "../../../components/common/table/DataTable";
+} from "../../../components/ui/table/DataTable";
 import { Link } from "react-router";
 import {
   Button,
@@ -11,17 +11,22 @@ import {
   Dialog,
   Field,
   Heading,
+  IconButton,
   NativeSelect,
   Portal,
   Select,
+  Tag,
   VStack,
+  Wrap,
   type ListCollection,
 } from "@chakra-ui/react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import FilterButton from "@/components/common/table/FilterButton";
-import FormField from "@/components/ui/FormField";
+import FilterButton from "@/components/ui/table/FilterButton";
+import StatusTag from "@/components/ui/StatusTag";
+import { Edit } from "lucide-react";
+import { EditBtn, MenuBtn, ViewBtn } from "@/components/ui/table/Buttons";
 
 type CompanyTable = {
   id?: string | number;
@@ -31,7 +36,16 @@ type CompanyTable = {
   owner?: string;
   email: string;
   mobile: string;
+  status: string;
 };
+
+const statusColors = {
+  "Active" : {
+    "bgColor": "green.100",
+    "color": "green.600",
+    "borderColor": "green.200",
+  }
+}
 
 const companyTableData: CompanyTable[] = [
   {
@@ -42,6 +56,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
+    status: "Active"
   },
   {
     id: 2,
@@ -51,6 +66,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
+    status: "Inactive"
   },
   {
     id: 1,
@@ -60,6 +76,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
+    status: "Verified"
   },
   {
     id: 4,
@@ -69,6 +86,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
+    status: "Unverified"
   },
   {
     id: 5,
@@ -78,6 +96,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
+    status: "Pending"
   },
   {
     id: 6,
@@ -87,6 +106,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
+    status: "Active"
   },
   {
     id: 7,
@@ -96,6 +116,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
+    status: "Active"
   },
   {
     id: 8,
@@ -105,6 +126,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
+    status: "Active"
   },
   {
     id: 9,
@@ -114,6 +136,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
+    status: "Active"
   },
   {
     id: 10,
@@ -123,15 +146,17 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
+    status: "Active"
   },
   {
     id:11,
-    name: "MNO Enterprise",
+    name: "MNO Enterprise 11",
     gst: "231HKV0482KD",
     pan: "HKV0482KD",
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
+    status: "Active"
   },
 ];
 
@@ -404,11 +429,37 @@ const FilterDialog: JSX.Element = () => {
 
 const columns: TableColumnDef<CompanyTable>[] = [
   { accessorKey: "name", header: "Company", width: 150 },
+  { 
+    accessorKey: "status", 
+    header: "Status", 
+    width: 150,
+    cell : (props) => {
+      const { status } = props.row.original
+      return (
+        <StatusTag label={status}/>
+      )
+    }
+  },
   { accessorKey: "gst", header: "GST", width: 150 },
   { accessorKey: "pan", header: "PAN", width: 150 },
   { accessorKey: "owner", header: "Owner Name", width: 150 },
   { accessorKey: "email", header: "Email", width: 150 },
   { accessorKey: "mobile", header: "Contact", width: 150 },
+  { 
+    id: "action", 
+    header: "Action", 
+    width: 150,
+    cell : (props) => {
+      // const { id } = props.row.original
+      return (
+        <Wrap gap={1} flexWrap="nowrap">
+          <EditBtn />
+          <ViewBtn />
+          <MenuBtn />
+        </Wrap>
+      )
+    }
+  },
 ];
 
 const Company = () => {
