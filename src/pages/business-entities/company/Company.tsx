@@ -12,6 +12,7 @@ import {
   Field,
   Heading,
   IconButton,
+  Menu,
   NativeSelect,
   Portal,
   Select,
@@ -25,7 +26,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FilterButton from "@/components/ui/table/FilterButton";
 import StatusTag from "@/components/ui/StatusTag";
-import { Edit } from "lucide-react";
+import { Edit, MessageCircleMore, Star } from "lucide-react";
 import { EditBtn, MenuBtn, ViewBtn } from "@/components/ui/table/Buttons";
 
 type CompanyTable = {
@@ -455,7 +456,19 @@ const columns: TableColumnDef<CompanyTable>[] = [
         <Wrap gap={1} flexWrap="nowrap">
           <EditBtn />
           <ViewBtn />
-          <MenuBtn />
+          <Menu.Root>
+            <Menu.Trigger>
+              <MenuBtn />
+            </Menu.Trigger>
+            <Portal>
+              <Menu.Positioner>
+                <Menu.Content>
+                  <Menu.Item value="1"><MessageCircleMore width={16}/>Message</Menu.Item>
+                  <Menu.Item value="2"><Star width={16}/>Favourite</Menu.Item>
+                </Menu.Content>
+              </Menu.Positioner>
+            </Portal>
+          </Menu.Root>
         </Wrap>
       )
     }

@@ -1,15 +1,20 @@
+import { UiSelect, type SelectOptionsType } from "@/components/ui/UISelect";
 import {
-  Box,
   Button,
+  Card,
   Field,
+  FileUpload,
   Heading,
   Input,
   NativeSelect,
 } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
-import { Controller, useForm } from "react-hook-form";
-import { Link } from "react-router";
+import {
+  Controller,
+  useForm,
+  type Control,
+  type FieldErrors,
+} from "react-hook-form";
 import { z } from "zod";
 
 const CompanyForm = () => {
@@ -20,22 +25,26 @@ const CompanyForm = () => {
       .min(2, { message: "Name must be larger than 2 characters" }),
     ownership: z.string().trim().optional(),
     owner: z.string().trim().optional(),
-    establishment_year: z.number().optional(),
+    establishment_year: z.coerce.number().nullable().optional(),
     company_type: z.string().trim().optional(),
     company_website: z.string().trim().optional(),
     company_logo_brochure: z.string().trim().optional(),
     status: z
-      .string({ required_error: "Please choose a status" })
-      .min(1, { message: "Status is required" }),
+      .object({ label: z.string(), value: z.string() })
+      .nullable()
+      .refine((data) => data !== null && !!data.value, {
+        message: "Status is required",
+      }),
+    // status: z.array(z.object({label: z.string(), value: z.string()})).nullable().optional(),
     country: z.string().trim().optional(),
     state: z.string().trim().optional(),
     city: z.string().trim().optional(),
-    zip_postal_code: z.number().optional(),
+    zip_postal_code: z.coerce.number().nullable().optional(),
     address: z.string().trim().optional(),
-    primary_contact_number: z.number().optional(),
-    primary_contact_number_code: z.number().optional(), // Made optional to avoid missing input issue
-    alternate_contact_number: z.number().optional(),
-    alternate_contact_country_code: z.number().optional(),
+    primary_contact_number: z.coerce.number().nullable().optional(),
+    primary_contact_number_code: z.coerce.number().nullable().optional(), // Made optional to avoid missing input issue
+    alternate_contact_number: z.coerce.number().nullable().optional(),
+    alternate_contact_country_code: z.coerce.number().nullable().optional(),
     primary_email: z
       .string()
       .trim()
@@ -51,58 +60,208 @@ const CompanyForm = () => {
     sub_category: z.string().trim().optional(),
     interested_in: z.string().trim().optional(),
     gst_certificate: z
-      .any()
+      .instanceof(File)
+      .nullable()
       .optional()
-      .refine((val) => val === undefined || val instanceof File, {
-        message: "GST Certificate must be a file or empty",
+      .refine((file) => !file || file.size <= 3_000_000, {
+        message: "File size must be less than 3MB",
+      })
+      .refine((file) => !file || file.type === "application/pdf", {
+        message: "File must be a PDF",
       }),
     aadhar_card: z
-      .any()
+      .instanceof(File)
+      .nullable()
       .optional()
-      .refine((val) => val === undefined || val instanceof File, {
-        message: "Aadhar Card must be a file or empty",
+      .refine((file) => !file || file.size <= 3_000_000, {
+        message: "File size must be less than 3MB",
+      })
+      .refine((file) => !file || file.type === "application/pdf", {
+        message: "File must be a PDF",
       }),
     pan_card: z
-      .any()
+      .instanceof(File)
+      .nullable()
       .optional()
-      .refine((val) => val === undefined || val instanceof File, {
-        message: "PAN Card must be a file or empty",
+      .refine((file) => !file || file.size <= 3_000_000, {
+        message: "File size must be less than 3MB",
+      })
+      .refine((file) => !file || file.type === "application/pdf", {
+        message: "File must be a PDF",
       }),
+
     authority_letter: z
-      .any()
+      .instanceof(File)
+      .nullable()
       .optional()
-      .refine((val) => val === undefined || val instanceof File, {
-        message: "Authority Letter must be a file or empty",
+      .refine((file) => !file || file.size <= 3_000_000, {
+        message: "File size must be less than 3MB",
+      })
+      .refine((file) => !file || file.type === "application/pdf", {
+        message: "File must be a PDF",
       }),
+
     primary_account_number: z.string().trim().optional(),
     primary_ifsc_code: z.string().trim().optional(),
     primary_bank_name: z.string().trim().optional(),
-    primary_bank_verification_photo: z
-      .any()
-      .optional()
-      .refine((val) => val === undefined || val instanceof File, {
-        message: "Bank Verification Photo must be a file or empty",
-      }),
   });
+
+  type CompanyFormSchema = z.infer<typeof companyFormSchema>;
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<CompanyFormSchema>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
-      status: "",
-      ownership: "",
-      company_type: "",
       company_name: "",
+      ownership: "",
+      owner: "",
+      establishment_year: null,
+      company_type: "",
+      company_website: "",
+      company_logo_brochure: "",
+      status: null,
+      country: "",
+      state: "",
+      city: "",
+      zip_postal_code: null,
+      address: "",
+      primary_contact_number: null,
+      primary_contact_number_code: null,
+      alternate_contact_number: null,
+      alternate_contact_country_code: null,
+      primary_email: "",
+      alternate_email: "",
+      notification_email: "",
+      gst_number: "",
+      pan_number: "",
+      trn_number: "",
+      tan_number: "",
+      primary_business_type: "",
+      primary_business_category: "",
+      sub_category: "",
+      interested_in: "",
+      gst_certificate: null,
+      aadhar_card: null,
+      pan_card: null,
+      authority_letter: null,
+      primary_account_number: "",
+      primary_ifsc_code: "",
+      primary_bank_name: "",
     },
   });
 
-  const submitHandler = (data) => {
+  const renderInput = (
+    fieldName: keyof CompanyFormSchema,
+    label: string,
+    placeholder: string,
+    control: Control<CompanyFormSchema>,
+    errors: FieldErrors<CompanyFormSchema>,
+    inputType: string = "text"
+  ) => {
+    return (
+      <Field.Root invalid={!!errors?.[fieldName]}>
+        <Field.Label>{label}</Field.Label>
+        <Controller
+          name={fieldName}
+          control={control}
+          render={({ field }) => {
+            return (
+              <Input
+                type={inputType}
+                placeholder={placeholder}
+                {...field}
+                value={field.value as number | string | null ?? ""}
+              />
+            );
+          }}
+        />
+        <Field.ErrorText>
+          {typeof errors?.[fieldName]?.message === "string"
+            ? errors[fieldName]?.message
+            : ""}
+        </Field.ErrorText>
+      </Field.Root>
+    );
+  };
+  const renderSelect = (
+    fieldName: keyof CompanyFormSchema,
+    label: string,
+    placeholder: string,
+    options: SelectOptionsType[],
+    control: Control<CompanyFormSchema>,
+    errors: FieldErrors<CompanyFormSchema>
+  ) => {
+    return (
+      <Field.Root invalid={!!errors?.[fieldName]}>
+        <Field.Label>{label}</Field.Label>
+        <Controller
+          name={fieldName}
+          control={control}
+          render={({ field }) => {
+            return (
+              <UiSelect
+                {...field}
+                value={options.find(
+                  (opt) =>
+                    opt.value === (field.value as SelectOptionsType)?.value
+                )}
+                isClearable
+                onChange={(val) => field.onChange(val)}
+                placeholder={placeholder}
+                options={options}
+              />
+            );
+          }}
+        />
+        <Field.ErrorText>
+          {typeof errors?.[fieldName]?.message === "string"
+            ? errors[fieldName]?.message
+            : ""}
+        </Field.ErrorText>
+      </Field.Root>
+    );
+  };
+  const renderInputFile = (
+    fieldName: keyof CompanyFormSchema,
+    label: string,
+    control: Control<CompanyFormSchema>,
+    errors: FieldErrors<CompanyFormSchema>
+  ) => {
+    return (
+      <Field.Root invalid={!!errors?.[fieldName]}>
+        <Field.Label>{label}</Field.Label>
+        <Controller
+          name={fieldName}
+          control={control}
+          render={({ field }) => (
+            <FileUpload.Root>
+              <FileUpload.HiddenInput
+                onChange={(e) => field.onChange(e.target?.files?.[0])}
+              />
+              <Input asChild>
+                <FileUpload.Trigger>
+                  <FileUpload.FileText />
+                </FileUpload.Trigger>
+              </Input>
+            </FileUpload.Root>
+          )}
+        />
+        <Field.ErrorText>
+          {typeof errors?.[fieldName]?.message === "string"
+            ? errors[fieldName]?.message
+            : ""}
+        </Field.ErrorText>
+      </Field.Root>
+    );
+  };
+
+  const submitHandler = (data: CompanyFormSchema) => {
     console.log("Data", data);
   };
-  const onError = (errors) => {
+  const onError = (errors: FieldErrors<CompanyFormSchema>) => {
     console.error("Validation Errors", errors);
   };
 
@@ -115,421 +274,249 @@ const CompanyForm = () => {
         <Heading mb={4} style={{ color: "text.primary" }}>Breadcrumbs</Heading>
       </Breadcrumbs> */}
 
-      <Box>
-        <form onSubmit={handleSubmit(submitHandler, onError)} className="">
-          <div>
-            <Heading mb={4}>Primary Information</Heading>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-              <Field.Root invalid={!!errors?.company_name}>
-                <Field.Label>Company Name</Field.Label>
-                <Controller
-                  name="company_name"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="text"
-                      placeholder="Enter Company Name"
-                      {...field}
-                    />
+      <Card.Root>
+        <Card.Body
+          bgColor="white"
+          _dark={{
+            bgColor: "initial",
+          }}
+          shadow="xl"
+          borderRadius="md"
+        >
+          <form onSubmit={handleSubmit(submitHandler, onError)} className="">
+            <div>
+              <Heading mb={4}>Primary Information</Heading>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
+                {renderInput(
+                  "company_name",
+                  "Company Name",
+                  "e.g. Acme Communication",
+                  control,
+                  errors
+                )}
+                {renderSelect(
+                  "status",
+                  "Status",
+                  "Select Status",
+                  [
+                    { label: "Active", value: "Active" },
+                    { label: "Inactive", value: "Inactive" },
+                  ],
+                  control,
+                  errors
+                )}
+
+                <Field.Root invalid={!!errors?.ownership}>
+                  <Field.Label>Ownership Type</Field.Label>
+                  <Controller
+                    name="ownership"
+                    control={control}
+                    render={({ field }) => (
+                      <NativeSelect.Root>
+                        <NativeSelect.Field {...field}>
+                          <option value="" disabled>
+                            Select Status
+                          </option>
+                          <option value="active">Active</option>
+                        </NativeSelect.Field>
+                        <NativeSelect.Indicator />
+                      </NativeSelect.Root>
+                    )}
+                  />
+                  <Field.ErrorText>
+                    {errors?.ownership?.message}
+                  </Field.ErrorText>
+                </Field.Root>
+                <Field.Root invalid={!!errors?.company_type}>
+                  <Field.Label>Company Type</Field.Label>
+                  <Controller
+                    name="company_type"
+                    control={control}
+                    render={({ field }) => (
+                      <NativeSelect.Root>
+                        <NativeSelect.Field {...field}>
+                          <option value="" disabled>
+                            Select Status
+                          </option>
+                          <option value="active">Active</option>
+                        </NativeSelect.Field>
+                        <NativeSelect.Indicator />
+                      </NativeSelect.Root>
+                    )}
+                  />
+                  <Field.ErrorText>
+                    {errors?.company_type?.message}
+                  </Field.ErrorText>
+                </Field.Root>
+                {renderInput(
+                  "owner",
+                  "Owner Name",
+                  "Enter Owner Name",
+                  control,
+                  errors
+                )}
+                {renderInput(
+                  "establishment_year",
+                  "Establishment Year",
+                  "Enter Establishemnt Year",
+                  control,
+                  errors,
+                  "number"
+                )}
+                {renderInput(
+                  "country",
+                  "Country",
+                  "Enter Country",
+                  control,
+                  errors
+                )}
+                {renderInput("state", "State", "Enter State", control, errors)}
+                {renderInput("city", "City", "Enter City", control, errors)}
+                {renderInput(
+                  "zip_postal_code",
+                  "Zip/Postal Code",
+                  "e.g. 350021...",
+                  control,
+                  errors,
+                  "number"
+                )}
+                <div className="md:col-span-2">
+                  {renderInput(
+                    "address",
+                    "Address",
+                    "Enter Address",
+                    control,
+                    errors
                   )}
-                />
-                <Field.ErrorText>
-                  {errors?.company_name?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.status}>
-                <Field.Label>Status</Field.Label>
-                <Controller
-                  name="status"
-                  control={control}
-                  render={({ field }) => (
-                    <NativeSelect.Root>
-                      <NativeSelect.Field {...field}>
-                        <option value="" disabled>
-                          Select Status
-                        </option>
-                        <option value="active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                        <option value="Disabled">Diabled</option>
-                      </NativeSelect.Field>
-                      <NativeSelect.Indicator />
-                    </NativeSelect.Root>
-                  )}
-                />
-                <Field.ErrorText>{errors?.status?.message}</Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.ownership}>
-                <Field.Label>Ownership Type</Field.Label>
-                <Controller
-                  name="ownership"
-                  control={control}
-                  render={({ field }) => (
-                    <NativeSelect.Root>
-                      <NativeSelect.Field {...field}>
-                        <option value="" disabled>
-                          Select Status
-                        </option>
-                        <option value="active">Active</option>
-                      </NativeSelect.Field>
-                      <NativeSelect.Indicator />
-                    </NativeSelect.Root>
-                  )}
-                />
-                <Field.ErrorText>{errors?.ownership?.message}</Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.company_type}>
-                <Field.Label>Company Type</Field.Label>
-                <Controller
-                  name="company_type"
-                  control={control}
-                  render={({ field }) => (
-                    <NativeSelect.Root>
-                      <NativeSelect.Field {...field}>
-                        <option value="" disabled>
-                          Select Status
-                        </option>
-                        <option value="active">Active</option>
-                      </NativeSelect.Field>
-                      <NativeSelect.Indicator />
-                    </NativeSelect.Root>
-                  )}
-                />
-                <Field.ErrorText>
-                  {errors?.company_type?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.owner}>
-                <Field.Label>Owner Name</Field.Label>
-                <Controller
-                  name="owner"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="text"
-                      placeholder="Enter Owner Name"
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>{errors?.owner?.message}</Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.establishment_year}>
-                <Field.Label>Establishment Year</Field.Label>
-                <Controller
-                  name="establishment_year"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="number"
-                      placeholder="Enter Establishment Year"
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>
-                  {errors?.establishment_year?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.country}>
-                <Field.Label>Country</Field.Label>
-                <Controller
-                  name="country"
-                  control={control}
-                  render={({ field }) => (
-                    <Input type="text" placeholder="Enter Country" {...field} />
-                  )}
-                />
-                <Field.ErrorText>{errors?.country?.message}</Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.state}>
-                <Field.Label>State</Field.Label>
-                <Controller
-                  name="state"
-                  control={control}
-                  render={({ field }) => (
-                    <Input type="text" placeholder="Enter State" {...field} />
-                  )}
-                />
-                <Field.ErrorText>{errors?.state?.message}</Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.city}>
-                <Field.Label>City</Field.Label>
-                <Controller
-                  name="city"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="text"
-                      placeholder="e.g. Ahmedabad..."
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>{errors?.city?.message}</Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.zip_postal_code}>
-                <Field.Label>State</Field.Label>
-                <Controller
-                  name="zip_postal_code"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="number"
-                      placeholder="e.g. 350021..."
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>
-                  {errors?.zip_postal_code?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.address}>
-                <Field.Label>Address</Field.Label>
-                <Controller
-                  name="address"
-                  control={control}
-                  render={({ field }) => (
-                    <Input type="text" placeholder="Address" {...field} />
-                  )}
-                />
-                <Field.ErrorText>{errors?.address?.message}</Field.ErrorText>
-              </Field.Root>
+                </div>
+              </div>
+              <br />
+
+              <Heading mb={4}>Contact Information</Heading>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
+                {renderInput(
+                  "primary_email",
+                  "Primary Email Address",
+                  "e.g. xyz@gmail.com...",
+                  control,
+                  errors,
+                  "email"
+                )}
+                {renderInput(
+                  "alternate_email",
+                  "Alternate Email Address",
+                  "e.g. abc@gmail.com...",
+                  control,
+                  errors,
+                  "email"
+                )}
+                {renderInput(
+                  "notification_email",
+                  "Notification Email",
+                  "e.g. abc@gmail.com...",
+                  control,
+                  errors,
+                  "email"
+                )}
+                {renderInput(
+                  "primary_contact_number",
+                  "Primary Contact Number",
+                  "Enter Contact Number",
+                  control,
+                  errors,
+                  "number"
+                )}
+                {renderInput(
+                  "alternate_contact_number",
+                  "Alternate Contact Number",
+                  "Enter Alternate Contact Number",
+                  control,
+                  errors,
+                  "number"
+                )}
+              </div>
+              <br />
+
+              <Heading mb={4} style={{ fontSize: "1.2rem" }}>
+                Business Details
+              </Heading>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
+                {renderInput(
+                  "primary_business_type",
+                  "Primary Business Type",
+                  "Enter Primary Business Type",
+                  control,
+                  errors
+                )}
+                {renderInput(
+                  "primary_business_category",
+                  "Primary Business Category",
+                  "Enter Primary Business Category",
+                  control,
+                  errors
+                )}
+                {renderInput(
+                  "sub_category",
+                  "Sub Category",
+                  "Enter Sub Category",
+                  control,
+                  errors
+                )}
+                {renderInput(
+                  "pan_number",
+                  "PAN Number",
+                  "Enter PAN Number",
+                  control,
+                  errors
+                )}
+                {renderInput(
+                  "gst_number",
+                  "GST Number",
+                  "Enter GST Number",
+                  control,
+                  errors
+                )}
+                {renderInput(
+                  "trn_number",
+                  "TRN Number",
+                  "Enter TRN Number",
+                  control,
+                  errors
+                )}
+              </div>
+              <br />
+
+              <Heading mb={4}>Documents</Heading>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
+                {renderInputFile(
+                  "pan_card",
+                  "PAN Certificate",
+                  control,
+                  errors
+                )}
+                {renderInputFile(
+                  "gst_certificate",
+                  "GST Certificate",
+                  control,
+                  errors
+                )}
+                {renderInputFile(
+                  "authority_letter",
+                  "Authority Letter",
+                  control,
+                  errors
+                )}
+              </div>
             </div>
             <br />
-
-            <Heading mb={4}>Contact Information</Heading>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-              <Field.Root invalid={!!errors?.primary_email}>
-                <Field.Label>Primary Email Address</Field.Label>
-                <Controller
-                  name="primary_email"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="email"
-                      placeholder="e.g. xyz@gmail.com..."
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>
-                  {errors?.primary_email?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.alternate_email}>
-                <Field.Label>Alternate Email Address</Field.Label>
-                <Controller
-                  name="alternate_email"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="email"
-                      placeholder="e.g. abc@gmail.com..."
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>
-                  {errors?.alternate_email?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.notification_email}>
-                <Field.Label>Notification Email</Field.Label>
-                <Controller
-                  name="notification_email"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="email"
-                      placeholder="e.g. abc@gmail.com..."
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>
-                  {errors?.notification_email?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.primary_contact_number}>
-                <Field.Label>Primary Contact Number</Field.Label>
-                <Controller
-                  name="primary_contact_number"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="number"
-                      placeholder="Enter Contact Number"
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>
-                  {errors?.primary_contact_number?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.alternate_contact_number}>
-                <Field.Label>Alternate Contact Number</Field.Label>
-                <Controller
-                  name="alternate_contact_number"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="number"
-                      placeholder="Enter Alternate Contact Number"
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>
-                  {errors?.alternate_contact_number?.message}
-                </Field.ErrorText>
-              </Field.Root>
+            <div className="text-right">
+              <Button variant="solid" type="submit">
+                Save
+              </Button>
             </div>
-            <br />
-
-            <Heading mb={4} style={{ fontSize: "1.2rem" }}>
-              Business Details
-            </Heading>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-              <Field.Root invalid={!!errors?.primary_business_type}>
-                <Field.Label>Primary Business Type</Field.Label>
-                <Controller
-                  name="primary_business_type"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="text"
-                      placeholder="Enter Primary Business Type"
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>
-                  {errors?.primary_business_type?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.primary_business_category}>
-                <Field.Label>Primary Business Category</Field.Label>
-                <Controller
-                  name="primary_business_category"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="text"
-                      placeholder="Select Primary Business Category"
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>
-                  {errors?.primary_business_category?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.sub_category}>
-                <Field.Label>Sub Category</Field.Label>
-                <Controller
-                  name="sub_category"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="text"
-                      placeholder="Enter Sub Category"
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>
-                  {errors?.sub_category?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.pan_number}>
-                <Field.Label>PAN Number</Field.Label>
-                <Controller
-                  name="pan_number"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="text"
-                      placeholder="Enter PAN Number"
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>{errors?.pan_number?.message}</Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.gst_number}>
-                <Field.Label>GST Number</Field.Label>
-                <Controller
-                  name="gst_number"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      type="text"
-                      placeholder="Enter GST Number"
-                      {...field}
-                    />
-                  )}
-                />
-                <Field.ErrorText>{errors?.gst_number?.message}</Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.trn_number}>
-                <Field.Label>TRN Number</Field.Label>
-                <Controller
-                  name="trn_number"
-                  control={control}
-                  render={({ field }) => (
-                    <Input type="text" placeholder="TRN Number" {...field} />
-                  )}
-                />
-                <Field.ErrorText>{errors?.trn_number?.message}</Field.ErrorText>
-              </Field.Root>
-            </div>
-            <br />
-
-            <Heading mb={4}>Documents</Heading>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-              <Field.Root invalid={!!errors?.pan_card}>
-                <Field.Label>PAN Certificate</Field.Label>
-                <Controller
-                  name="pan_card"
-                  control={control}
-                  render={({ field }) => <Input type="file" {...field} />}
-                />
-                <Field.ErrorText>{errors?.pan_card?.message}</Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.gst_certificate}>
-                <Field.Label>GST Certificate</Field.Label>
-                <Controller
-                  name="gst_certificate"
-                  control={control}
-                  render={({ field }) => <Input type="file" {...field} />}
-                />
-                <Field.ErrorText>
-                  {errors?.gst_certificate?.message}
-                </Field.ErrorText>
-              </Field.Root>
-              <Field.Root invalid={!!errors?.authority_letter}>
-                <Field.Label>Authority Letter</Field.Label>
-                <Controller
-                  name="authority_letter"
-                  control={control}
-                  render={({ field }) => <Input type="file" {...field} />}
-                />
-                <Field.ErrorText>
-                  {errors?.authority_letter?.message}
-                </Field.ErrorText>
-              </Field.Root>
-            </div>
-          </div>
-          <br />
-          <div className="text-right">
-            <Button variant="solid" type="submit">
-              Save
-            </Button>
-          </div>
-        </form>
-      </Box>
+          </form>
+        </Card.Body>
+      </Card.Root>
     </div>
   );
 };

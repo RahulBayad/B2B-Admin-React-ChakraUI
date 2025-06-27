@@ -34,7 +34,9 @@ const buttonRecipe = defineRecipe({
 const inputRecipe = defineRecipe({
   base: {
     transition: "all 0.2s",
-    focusRingColor: "primary.600"
+    _focus: {
+      focusRingColor: "primary.600",
+    }
   },
 });
 
@@ -49,7 +51,7 @@ const config = defineConfig({
           300: { value: "#64B5F6" },
           400: { value: "#42A5F5" },
           500: { value: "#2196F3" },
-          600: { value: "#1E88E5" },
+          600: { value: "#1E88F8" },
           700: { value: "#1976D2" },
           800: { value: "#1565C0" },
           900: { value: "#0D47A1" },

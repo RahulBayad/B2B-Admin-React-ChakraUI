@@ -338,9 +338,6 @@ export const DataTable = ({
         return [...filteredCols, { id: columnID, desc: true }];
       });
     };
-    // const unSort = (columnID: string) => {
-    //   table.setSorting((prev) => prev.filter((col) => col.id !== columnID));
-    // };
 
     return (
       <>
