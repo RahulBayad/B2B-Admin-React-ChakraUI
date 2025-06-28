@@ -1,23 +1,40 @@
-import { UiSelect, type SelectOptionsType } from "@/components/ui/UISelect";
 import {
+  renderInput,
+  renderInputFile,
+  renderSelect,
+} from "@/components/ui/form/formInput";
+import {
+  Box,
   Button,
   Card,
-  Field,
-  FileUpload,
   Heading,
-  Input,
-  NativeSelect,
+  IconButton,
+  Separator,
 } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Controller,
-  useForm,
-  type Control,
-  type FieldErrors,
-} from "react-hook-form";
+import { useForm, type FieldErrors } from "react-hook-form";
 import { z } from "zod";
+import { officeTypes } from "./OfficeLocation";
 
 const CompanyForm = () => {
+  const fileSchema = z
+    .instanceof(File)
+    .nullable()
+    .optional()
+    .refine((file) => !file || file.size <= 3_000_000, {
+      message: "File size must be less than 3MB",
+    })
+    .refine(
+      (file) =>
+        !file ||
+        ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(
+          file.type
+        ),
+      {
+        message: "File must be a PDF, JPG, or PNG",
+      }
+    );
+
   const companyFormSchema = z.object({
     company_name: z
       .string({ required_error: "Company Name is required" })
@@ -59,48 +76,60 @@ const CompanyForm = () => {
     primary_business_category: z.string().trim().optional(),
     sub_category: z.string().trim().optional(),
     interested_in: z.string().trim().optional(),
-    gst_certificate: z
-      .instanceof(File)
-      .nullable()
-      .optional()
-      .refine((file) => !file || file.size <= 3_000_000, {
-        message: "File size must be less than 3MB",
+    gst_certificate: fileSchema,
+    "194Q_declaration": fileSchema,
+    headOffice: z
+      .object({
+        officeName: z.string().nullable().optional(),
+        office_gst: z.string().nullable().optional(),
+        contact_person: z.string().nullable().optional(),
+        email: z.string().nullable().optional(),
+        phone: z.string().nullable().optional(),
+        address: z.object({
+          country: z
+            .object({ label: z.string(), value: z.string() })
+            .nullable().optional(),
+          state: z.object({ label: z.string(), value: z.string() }).nullable().optional(),
+          city: z.object({ label: z.string(), value: z.string() }).nullable().optional(),
+          pincode: z.coerce.number().nullable().optional(),
+          location: z.string().nullable().optional(),
+        }).nullable().optional(),
       })
-      .refine((file) => !file || file.type === "application/pdf", {
-        message: "File must be a PDF",
-      }),
-    aadhar_card: z
-      .instanceof(File)
       .nullable()
-      .optional()
-      .refine((file) => !file || file.size <= 3_000_000, {
-        message: "File size must be less than 3MB",
-      })
-      .refine((file) => !file || file.type === "application/pdf", {
-        message: "File must be a PDF",
-      }),
-    pan_card: z
-      .instanceof(File)
+      .optional(),
+    offices: z
+      .array(
+        z.object({
+          officeType: z
+            .object({ label: z.string(), value: z.string() })
+            .nullable(),
+          officeName: z.string().nullable().optional(),
+          office_gst: z.string().nullable().optional(),
+          contact_person: z.string().nullable().optional(),
+          email: z.string().nullable().optional(),
+          phone: z.string().nullable().optional(),
+          address: z
+            .object({
+              country: z
+                .object({ label: z.string(), value: z.string() })
+                .nullable(),
+              state: z
+                .object({ label: z.string(), value: z.string() })
+                .nullable(),
+              city: z
+                .object({ label: z.string(), value: z.string() })
+                .nullable(),
+              pincode: z.coerce.number().nullable().optional(),
+              location: z.string().nullable().optional(),
+            })
+            .nullable()
+            .optional(),
+        })
+      )
       .nullable()
-      .optional()
-      .refine((file) => !file || file.size <= 3_000_000, {
-        message: "File size must be less than 3MB",
-      })
-      .refine((file) => !file || file.type === "application/pdf", {
-        message: "File must be a PDF",
-      }),
-
-    authority_letter: z
-      .instanceof(File)
-      .nullable()
-      .optional()
-      .refine((file) => !file || file.size <= 3_000_000, {
-        message: "File size must be less than 3MB",
-      })
-      .refine((file) => !file || file.type === "application/pdf", {
-        message: "File must be a PDF",
-      }),
-
+      .optional(),
+    pan_card: fileSchema,
+    authority_letter: fileSchema,
     primary_account_number: z.string().trim().optional(),
     primary_ifsc_code: z.string().trim().optional(),
     primary_bank_name: z.string().trim().optional(),
@@ -144,119 +173,15 @@ const CompanyForm = () => {
       sub_category: "",
       interested_in: "",
       gst_certificate: null,
-      aadhar_card: null,
       pan_card: null,
       authority_letter: null,
+      "194Q_declaration": null,
+      offices: null,
       primary_account_number: "",
       primary_ifsc_code: "",
       primary_bank_name: "",
     },
   });
-
-  const renderInput = (
-    fieldName: keyof CompanyFormSchema,
-    label: string,
-    placeholder: string,
-    control: Control<CompanyFormSchema>,
-    errors: FieldErrors<CompanyFormSchema>,
-    inputType: string = "text"
-  ) => {
-    return (
-      <Field.Root invalid={!!errors?.[fieldName]}>
-        <Field.Label>{label}</Field.Label>
-        <Controller
-          name={fieldName}
-          control={control}
-          render={({ field }) => {
-            return (
-              <Input
-                type={inputType}
-                placeholder={placeholder}
-                {...field}
-                value={field.value as number | string | null ?? ""}
-              />
-            );
-          }}
-        />
-        <Field.ErrorText>
-          {typeof errors?.[fieldName]?.message === "string"
-            ? errors[fieldName]?.message
-            : ""}
-        </Field.ErrorText>
-      </Field.Root>
-    );
-  };
-  const renderSelect = (
-    fieldName: keyof CompanyFormSchema,
-    label: string,
-    placeholder: string,
-    options: SelectOptionsType[],
-    control: Control<CompanyFormSchema>,
-    errors: FieldErrors<CompanyFormSchema>
-  ) => {
-    return (
-      <Field.Root invalid={!!errors?.[fieldName]}>
-        <Field.Label>{label}</Field.Label>
-        <Controller
-          name={fieldName}
-          control={control}
-          render={({ field }) => {
-            return (
-              <UiSelect
-                {...field}
-                value={options.find(
-                  (opt) =>
-                    opt.value === (field.value as SelectOptionsType)?.value
-                )}
-                isClearable
-                onChange={(val) => field.onChange(val)}
-                placeholder={placeholder}
-                options={options}
-              />
-            );
-          }}
-        />
-        <Field.ErrorText>
-          {typeof errors?.[fieldName]?.message === "string"
-            ? errors[fieldName]?.message
-            : ""}
-        </Field.ErrorText>
-      </Field.Root>
-    );
-  };
-  const renderInputFile = (
-    fieldName: keyof CompanyFormSchema,
-    label: string,
-    control: Control<CompanyFormSchema>,
-    errors: FieldErrors<CompanyFormSchema>
-  ) => {
-    return (
-      <Field.Root invalid={!!errors?.[fieldName]}>
-        <Field.Label>{label}</Field.Label>
-        <Controller
-          name={fieldName}
-          control={control}
-          render={({ field }) => (
-            <FileUpload.Root>
-              <FileUpload.HiddenInput
-                onChange={(e) => field.onChange(e.target?.files?.[0])}
-              />
-              <Input asChild>
-                <FileUpload.Trigger>
-                  <FileUpload.FileText />
-                </FileUpload.Trigger>
-              </Input>
-            </FileUpload.Root>
-          )}
-        />
-        <Field.ErrorText>
-          {typeof errors?.[fieldName]?.message === "string"
-            ? errors[fieldName]?.message
-            : ""}
-        </Field.ErrorText>
-      </Field.Root>
-    );
-  };
 
   const submitHandler = (data: CompanyFormSchema) => {
     console.log("Data", data);
@@ -286,227 +211,385 @@ const CompanyForm = () => {
           <form onSubmit={handleSubmit(submitHandler, onError)} className="">
             <div>
               <Heading mb={4}>Primary Information</Heading>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-                {renderInput(
-                  "company_name",
-                  "Company Name",
-                  "e.g. Acme Communication",
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 ">
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "company_name",
+                  label: "Company Name",
+                  placeholder: "e.g. Acme Communication",
                   control,
-                  errors
-                )}
-                {renderSelect(
-                  "status",
-                  "Status",
-                  "Select Status",
-                  [
+                  errors,
+                })}
+
+                {renderSelect<CompanyFormSchema>({
+                  fieldName: "status",
+                  label: "Status",
+                  placeholder: "Select Status",
+                  options: [
                     { label: "Active", value: "Active" },
                     { label: "Inactive", value: "Inactive" },
                   ],
                   control,
-                  errors
-                )}
+                  errors,
+                })}
 
-                <Field.Root invalid={!!errors?.ownership}>
-                  <Field.Label>Ownership Type</Field.Label>
-                  <Controller
-                    name="ownership"
-                    control={control}
-                    render={({ field }) => (
-                      <NativeSelect.Root>
-                        <NativeSelect.Field {...field}>
-                          <option value="" disabled>
-                            Select Status
-                          </option>
-                          <option value="active">Active</option>
-                        </NativeSelect.Field>
-                        <NativeSelect.Indicator />
-                      </NativeSelect.Root>
-                    )}
-                  />
-                  <Field.ErrorText>
-                    {errors?.ownership?.message}
-                  </Field.ErrorText>
-                </Field.Root>
-                <Field.Root invalid={!!errors?.company_type}>
-                  <Field.Label>Company Type</Field.Label>
-                  <Controller
-                    name="company_type"
-                    control={control}
-                    render={({ field }) => (
-                      <NativeSelect.Root>
-                        <NativeSelect.Field {...field}>
-                          <option value="" disabled>
-                            Select Status
-                          </option>
-                          <option value="active">Active</option>
-                        </NativeSelect.Field>
-                        <NativeSelect.Indicator />
-                      </NativeSelect.Root>
-                    )}
-                  />
-                  <Field.ErrorText>
-                    {errors?.company_type?.message}
-                  </Field.ErrorText>
-                </Field.Root>
-                {renderInput(
-                  "owner",
-                  "Owner Name",
-                  "Enter Owner Name",
-                  control,
-                  errors
-                )}
-                {renderInput(
-                  "establishment_year",
-                  "Establishment Year",
-                  "Enter Establishemnt Year",
+                {renderSelect<CompanyFormSchema>({
+                  fieldName: "ownership",
+                  label: "Ownership Type",
+                  placeholder: "Select Ownership Type",
+                  options: [
+                    { label: "Active", value: "Active" },
+                    { label: "Inactive", value: "Inactive" },
+                  ],
                   control,
                   errors,
-                  "number"
-                )}
-                {renderInput(
-                  "country",
-                  "Country",
-                  "Enter Country",
-                  control,
-                  errors
-                )}
-                {renderInput("state", "State", "Enter State", control, errors)}
-                {renderInput("city", "City", "Enter City", control, errors)}
-                {renderInput(
-                  "zip_postal_code",
-                  "Zip/Postal Code",
-                  "e.g. 350021...",
+                })}
+
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "owner",
+                  label: "Owner Name",
+                  placeholder: "Enter Owner Name",
                   control,
                   errors,
-                  "number"
-                )}
-                <div className="md:col-span-2">
-                  {renderInput(
-                    "address",
-                    "Address",
-                    "Enter Address",
-                    control,
-                    errors
-                  )}
-                </div>
+                })}
+
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "establishment_year",
+                  label: "Establishment Year",
+                  placeholder: "Enter Establishment Year",
+                  inputType: "number",
+                  control,
+                  errors,
+                })}
+
+                {renderSelect<CompanyFormSchema>({
+                  fieldName: "primary_business_type",
+                  label: "Business Type",
+                  placeholder: "Select Business Type",
+                  options: [
+                    { label: "Export", value: "Export" },
+                    { label: "Import", value: "Import" },
+                  ],
+                  control,
+                  errors,
+                })}
+
+                {renderSelect<CompanyFormSchema>({
+                  fieldName: "primary_business_category",
+                  label: "Business Category",
+                  placeholder: "Select Business Category",
+                  options: [
+                    { label: "Electronics", value: "Electronics" },
+                    { label: "Engineering", value: "Engineering" },
+                    { label: "Plastic", value: "Plastic" },
+                    { label: "Food", value: "Food" },
+                  ],
+                  control,
+                  errors,
+                })}
+
+                {renderSelect<CompanyFormSchema>({
+                  fieldName: "sub_category",
+                  label: "Sub Category",
+                  placeholder: "Select Sub Category",
+                  options: [
+                    { label: "Export", value: "Export" },
+                    { label: "Import", value: "Import" },
+                  ],
+                  control,
+                  errors,
+                })}
+
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "company_website",
+                  label: "Company Website (URL)",
+                  placeholder: "Enter Company Website",
+                  control,
+                  errors,
+                })}
+
+                {renderInputFile<CompanyFormSchema>({
+                  fieldName: "company_logo_brochure",
+                  label: "Company Logo (URL)",
+                  control,
+                  errors,
+                })}
+
+                {renderSelect<CompanyFormSchema>({
+                  fieldName: "country",
+                  label: "Country",
+                  placeholder: "Select Country",
+                  options: [
+                    { label: "India", value: "India" },
+                    { label: "Nepal", value: "Nepal" },
+                  ],
+                  control,
+                  errors,
+                })}
+
+                {renderSelect<CompanyFormSchema>({
+                  fieldName: "state",
+                  label: "State",
+                  placeholder: "Select State",
+                  options: [
+                    { label: "Gujarat", value: "Gujarat" },
+                    { label: "Maharashtra", value: "Maharashtra" },
+                  ],
+                  control,
+                  errors,
+                })}
+
+                {renderSelect<CompanyFormSchema>({
+                  fieldName: "city",
+                  label: "City",
+                  placeholder: "Select City",
+                  options: [
+                    { label: "Ahmedabad", value: "Ahmedabad" },
+                    { label: "Mumbai", value: "Mumbai" },
+                  ],
+                  control,
+                  errors,
+                })}
+
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "zip_postal_code",
+                  label: "Zip/Postal Code",
+                  placeholder: "e.g. 350021...",
+                  inputType: "number",
+                  control,
+                  errors,
+                })}
+
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "address",
+                  label: "Address",
+                  placeholder: "Enter Address",
+                  control,
+                  errors,
+                })}
               </div>
+
+              <br />
+              <Separator />
               <br />
 
               <Heading mb={4}>Contact Information</Heading>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-                {renderInput(
-                  "primary_email",
-                  "Primary Email Address",
-                  "e.g. xyz@gmail.com...",
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ">
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "primary_email",
+                  label: "Primary Email Address",
+                  placeholder: "e.g. xyz@gmail.com...",
+                  inputType: "email",
                   control,
                   errors,
-                  "email"
-                )}
-                {renderInput(
-                  "alternate_email",
-                  "Alternate Email Address",
-                  "e.g. abc@gmail.com...",
+                })}
+
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "alternate_email",
+                  label: "Alternate Email Address",
+                  placeholder: "e.g. abc@gmail.com...",
+                  inputType: "email",
                   control,
                   errors,
-                  "email"
-                )}
-                {renderInput(
-                  "notification_email",
-                  "Notification Email",
-                  "e.g. abc@gmail.com...",
+                })}
+
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "primary_contact_number",
+                  label: "Primary Contact Number",
+                  placeholder: "Enter Contact Number",
+                  inputType: "number",
                   control,
                   errors,
-                  "email"
-                )}
-                {renderInput(
-                  "primary_contact_number",
-                  "Primary Contact Number",
-                  "Enter Contact Number",
+                })}
+
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "alternate_contact_number",
+                  label: "Alternate Contact Number",
+                  placeholder: "Enter Alternate Contact Number",
+                  inputType: "number",
                   control,
                   errors,
-                  "number"
-                )}
-                {renderInput(
-                  "alternate_contact_number",
-                  "Alternate Contact Number",
-                  "Enter Alternate Contact Number",
-                  control,
-                  errors,
-                  "number"
-                )}
+                })}
               </div>
+
+              <br />
+              <Separator />
               <br />
 
               <Heading mb={4} style={{ fontSize: "1.2rem" }}>
                 Business Details
               </Heading>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-                {renderInput(
-                  "primary_business_type",
-                  "Primary Business Type",
-                  "Enter Primary Business Type",
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ">
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "pan_number",
+                  label: "PAN Number",
+                  placeholder: "Enter PAN Number",
                   control,
-                  errors
-                )}
-                {renderInput(
-                  "primary_business_category",
-                  "Primary Business Category",
-                  "Enter Primary Business Category",
+                  errors,
+                })}
+
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "gst_number",
+                  label: "GST Number",
+                  placeholder: "Enter GST Number",
                   control,
-                  errors
-                )}
-                {renderInput(
-                  "sub_category",
-                  "Sub Category",
-                  "Enter Sub Category",
+                  errors,
+                })}
+
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "trn_number",
+                  label: "TRN Number",
+                  placeholder: "Enter TRN Number",
                   control,
-                  errors
-                )}
-                {renderInput(
-                  "pan_number",
-                  "PAN Number",
-                  "Enter PAN Number",
+                  errors,
+                })}
+
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "tan_number",
+                  label: "TAN Number",
+                  placeholder: "Enter TAN Number",
                   control,
-                  errors
-                )}
-                {renderInput(
-                  "gst_number",
-                  "GST Number",
-                  "Enter GST Number",
-                  control,
-                  errors
-                )}
-                {renderInput(
-                  "trn_number",
-                  "TRN Number",
-                  "Enter TRN Number",
-                  control,
-                  errors
-                )}
+                  errors,
+                })}
               </div>
+
+              <br />
+              <Separator />
               <br />
 
               <Heading mb={4}>Documents</Heading>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-                {renderInputFile(
-                  "pan_card",
-                  "PAN Certificate",
+                {renderInputFile<CompanyFormSchema>({
+                  fieldName: "pan_card",
+                  label: "PAN Certificate",
                   control,
-                  errors
-                )}
-                {renderInputFile(
-                  "gst_certificate",
-                  "GST Certificate",
+                  errors,
+                })}
+
+                {renderInputFile<CompanyFormSchema>({
+                  fieldName: "gst_certificate",
+                  label: "GST Certificate",
                   control,
-                  errors
-                )}
-                {renderInputFile(
-                  "authority_letter",
-                  "Authority Letter",
+                  errors,
+                })}
+
+                {renderInputFile<CompanyFormSchema>({
+                  fieldName: "authority_letter",
+                  label: "Authority Letter",
                   control,
-                  errors
-                )}
+                  errors,
+                })}
+
+                {renderInputFile<CompanyFormSchema>({
+                  fieldName: "194Q_declaration",
+                  label: "194Q Declaration",
+                  control,
+                  errors,
+                })}
               </div>
+
+              <br />
+              <Separator />
+              <br />
+              <Box>
+                <Box className="text-right flex justify-between" mb={2}>
+                  <Heading>Office Information</Heading>
+                </Box>
+                <Card.Root>
+                  <Card.Body px={4} py={4}>
+                    <Box position="relative">
+                      <Box mb={2} className="flex justify-between items-center">
+                        <Heading size="lg">Head Office</Heading>
+                      </Box>
+                      <Box
+                        borderWidth={1}
+                        p={4}
+                        className="relative rounded-md grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                      >
+                        {renderInput<CompanyFormSchema>({
+                          fieldName: "headOffice.officeName",
+                          label: "Office Name",
+                          control: control,
+                          placeholder: "Enter Office Name",
+                        })}
+                        {renderInput<CompanyFormSchema>({
+                          fieldName: "headOffice.office_gst",
+                          label: "GST/REG. Number",
+                          control: control,
+                          placeholder: "Enter Office Name",
+                        })}
+                        {renderInput<CompanyFormSchema>({
+                          fieldName: "headOffice.contact_person",
+                          label: "Contact Person",
+                          control: control,
+                          placeholder: "Enter Office Name",
+                        })}
+                        {renderInput<CompanyFormSchema>({
+                          fieldName: "headOffice.email",
+                          label: "Email Address",
+                          control: control,
+                          placeholder: "Enter Office Name",
+                          inputType: "email",
+                        })}
+                        {renderInput<CompanyFormSchema>({
+                          fieldName: "headOffice.phone",
+                          label: "Contact Number",
+                          control: control,
+                          placeholder: "Contact Number",
+                          inputType: "number",
+                        })}
+                        {renderSelect<CompanyFormSchema>({
+                          fieldName: "headOffice.address.country",
+                          label: "Country",
+                          options: [
+                            { label: "India", value: "India" },
+                            { label: "Nepal", value: "Nepal" },
+                          ],
+                          control: control,
+                          placeholder: "Select Country",
+                        })}
+                        {renderSelect<CompanyFormSchema>({
+                          fieldName: "headOffice.address.state",
+                          label: "State",
+                          options: [
+                            { label: "Gujarat", value: "Gujarat" },
+                            { label: "Rajasthan", value: "Rajasthan" },
+                          ],
+                          control: control,
+                          placeholder: "Select State",
+                        })}
+                        {renderSelect<CompanyFormSchema>({
+                          fieldName: "headOffice.address.city",
+                          label: "City",
+                          options: [
+                            { label: "Ahmedabad", value: "Ahmedabad" },
+                            { label: "Gandhinagar", value: "Gandhinagar" },
+                          ],
+                          control: control,
+                          placeholder: "Select City",
+                        })}
+                        {renderInput<CompanyFormSchema>({
+                          fieldName: "headOffice.address.pincode",
+                          label: "Zip/Postal Code",
+                          control: control,
+                          placeholder: "e.g. 680291...",
+                          inputType: "number",
+                        })}
+                        {renderInput<CompanyFormSchema>({
+                          fieldName: "headOffice.address.location",
+                          label: "Location",
+                          control: control,
+                          placeholder: "e.g. 70/703, Keshav Apartments...",
+                        })}
+                      </Box>
+                      <br />
+                    </Box>
+                    {officeTypes<CompanyFormSchema>({
+                      control,
+                      name: "offices",
+                    })}
+                  </Card.Body>
+                </Card.Root>
+              </Box>
             </div>
             <br />
             <div className="text-right">

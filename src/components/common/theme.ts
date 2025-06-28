@@ -36,12 +36,16 @@ const inputRecipe = defineRecipe({
     transition: "all 0.2s",
     _focus: {
       focusRingColor: "primary.600",
-    }
+    },
   },
 });
 
 const config = defineConfig({
   theme: {
+    recipes: {
+      button: buttonRecipe,
+      input: inputRecipe,
+    },
     tokens: {
       colors: {
         primary: {
@@ -70,10 +74,7 @@ const config = defineConfig({
         },
       },
     },
-    recipes: {
-      button: buttonRecipe,
-      input: inputRecipe
-    },
+    
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useState, type JSX, type ReactElement } from "react";
+import  { type JSX } from "react";
 import {
   DataTable,
   type TableColumnDef,
@@ -11,13 +11,9 @@ import {
   Dialog,
   Field,
   Heading,
-  IconButton,
   Menu,
-  NativeSelect,
   Portal,
   Select,
-  Tag,
-  VStack,
   Wrap,
   type ListCollection,
 } from "@chakra-ui/react";
@@ -26,7 +22,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FilterButton from "@/components/ui/table/FilterButton";
 import StatusTag from "@/components/ui/StatusTag";
-import { Edit, MessageCircleMore, Star } from "lucide-react";
+import { MessageCircleMore, Star } from "lucide-react";
 import { EditBtn, MenuBtn, ViewBtn } from "@/components/ui/table/Buttons";
 
 type CompanyTable = {
@@ -39,14 +35,6 @@ type CompanyTable = {
   mobile: string;
   status: string;
 };
-
-const statusColors = {
-  "Active" : {
-    "bgColor": "green.100",
-    "color": "green.600",
-    "borderColor": "green.200",
-  }
-}
 
 const companyTableData: CompanyTable[] = [
   {
@@ -457,7 +445,7 @@ const columns: TableColumnDef<CompanyTable>[] = [
           <EditBtn />
           <ViewBtn />
           <Menu.Root>
-            <Menu.Trigger>
+            <Menu.Trigger asChild>
               <MenuBtn />
             </Menu.Trigger>
             <Portal>

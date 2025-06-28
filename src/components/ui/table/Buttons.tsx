@@ -4,7 +4,8 @@ import { Edit, EllipsisVertical, Eye } from "lucide-react";
 export const EditBtn = (props: ButtonProps) => {
   return (
     <IconButton 
-        variant='subtle'
+        variant='outline'
+        colorPalette="blue"
         p={0}
         height="24px"
         width="24px"
@@ -19,7 +20,8 @@ export const EditBtn = (props: ButtonProps) => {
 export const ViewBtn = (props: ButtonProps) => {
   return (
     <IconButton 
-        variant='subtle'
+        variant='outline'
+        colorPalette="blue"
         p={0}
         height="24px"
         width="24px"
@@ -34,7 +36,8 @@ export const ViewBtn = (props: ButtonProps) => {
 export const MenuBtn = (props: ButtonProps) => {
   return (
     <IconButton 
-        variant='subtle'
+        variant='outline'
+        colorPalette="blue"
         p={0}
         height="24px"
         width="24px"
