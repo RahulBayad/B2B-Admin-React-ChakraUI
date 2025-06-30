@@ -4,7 +4,7 @@ import { UiSelect, type SelectOptionsType } from "@/components/ui/UISelect";
 
 type RenderInputProps<T extends FieldValues> = {
   fieldName: FieldPath<T>;
-  label: string;
+  label?: string;
   placeholder: string;
   control: Control<T>;
   errors?: FieldErrors<T>;
@@ -13,7 +13,7 @@ type RenderInputProps<T extends FieldValues> = {
 
 type RenderSelectProps<T extends FieldValues> = {
   fieldName: FieldPath<T>;
-  label: string;
+  label?: string;
   placeholder: string;
   options: SelectOptionsType[];
   control: Control<T>;
@@ -22,7 +22,7 @@ type RenderSelectProps<T extends FieldValues> = {
 
 type RenderInputFileProps<T extends FieldValues> = {
   fieldName: FieldPath<T>;
-  label: string;
+  label?: string;
   control: Control<T>;
   errors?: FieldErrors<T>;
 };
@@ -81,7 +81,7 @@ export function renderSelect<T extends FieldValues>({
                 opt.value === (field.value as SelectOptionsType)?.value
             )}
             isClearable
-            onChange={(val) => field.onChange(val)}
+            onChange={(val) => field.onChange((val as SelectOptionsType)?.value)}
             placeholder={placeholder}
             options={options}
           />

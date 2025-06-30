@@ -1,5 +1,5 @@
 import { renderInput, renderSelect } from "@/components/ui/form/formInput";
-import { Box, Button, Card, Heading, IconButton } from "@chakra-ui/react";
+import { Box, Button, Heading, IconButton } from "@chakra-ui/react";
 import { Plus, Trash } from "lucide-react";
 import {
   useFieldArray,
@@ -44,7 +44,7 @@ export const officeTypes = <T extends FieldValues>({
           return (
             <Box position="relative">
               <Box mb={2} className="flex justify-between items-center">
-                <Heading size="lg">Office {index + 1}</Heading>
+                <Heading size="md">Office {index + 1}</Heading>
                 <IconButton
                   size="xs"
                   variant="outline"
@@ -55,7 +55,6 @@ export const officeTypes = <T extends FieldValues>({
                   color="red.500"
                   _hover={{ bgColor: "red.500", color: "white" }}
                   onClick={() => remove(index)}
-
                 >
                   <Trash /> Remove
                 </IconButton>
