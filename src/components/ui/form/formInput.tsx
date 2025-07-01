@@ -1,13 +1,24 @@
-import { Field, FileUpload, Input } from "@chakra-ui/react";
-import { Controller, type Control, type FieldErrors, type FieldPath, type FieldValues } from "react-hook-form";
+import {
+  Field,
+  FieldErrorText,
+  FileUpload,
+  Input,
+  RadioGroup,
+  Wrap,
+} from "@chakra-ui/react";
+import {
+  Controller,
+  type Control,
+  type FieldPath,
+  type FieldValues,
+} from "react-hook-form";
 import { UiSelect, type SelectOptionsType } from "@/components/ui/UISelect";
 
 type RenderInputProps<T extends FieldValues> = {
   fieldName: FieldPath<T>;
   label?: string;
-  placeholder: string;
+  placeholder?: string;
   control: Control<T>;
-  errors?: FieldErrors<T>;
   inputType?: React.InputHTMLAttributes<HTMLInputElement>["type"];
 };
 
@@ -17,14 +28,12 @@ type RenderSelectProps<T extends FieldValues> = {
   placeholder: string;
   options: SelectOptionsType[];
   control: Control<T>;
-  errors?: FieldErrors<T>;
 };
 
 type RenderInputFileProps<T extends FieldValues> = {
   fieldName: FieldPath<T>;
   label?: string;
   control: Control<T>;
-  errors?: FieldErrors<T>;
 };
 
 export function renderInput<T extends FieldValues>({
@@ -32,30 +41,25 @@ export function renderInput<T extends FieldValues>({
   label,
   placeholder,
   control,
-  errors,
   inputType = "text",
 }: RenderInputProps<T>) {
   return (
-    <Field.Root invalid={!!errors?.[fieldName]}>
-      <Field.Label>{label}</Field.Label>
-      <Controller
-        name={fieldName}
-        control={control}
-        render={({ field }) => (
+    <Controller
+      name={fieldName}
+      control={control}
+      render={({ field, fieldState }) => (
+        <Field.Root invalid={!!fieldState.error}>
+          <Field.Label>{label}</Field.Label>
           <Input
             type={inputType}
             placeholder={placeholder}
             {...field}
             value={(field.value as string | number | null) ?? ""}
           />
-        )}
-      />
-      <Field.ErrorText>
-        {typeof errors?.[fieldName]?.message === "string"
-          ? errors[fieldName]?.message
-          : ""}
-      </Field.ErrorText>
-    </Field.Root>
+          <FieldErrorText>{fieldState.error?.message || ""}</FieldErrorText>
+        </Field.Root>
+      )}
+    />
   );
 }
 
@@ -65,49 +69,44 @@ export function renderSelect<T extends FieldValues>({
   placeholder,
   options,
   control,
-  errors,
 }: RenderSelectProps<T>) {
   return (
-    <Field.Root invalid={!!errors?.[fieldName]}>
-      <Field.Label>{label}</Field.Label>
-      <Controller
-        name={fieldName}
-        control={control}
-        render={({ field }) => (
+    <Controller
+      name={fieldName}
+      control={control}
+      render={({ field, fieldState }) => (
+        <Field.Root invalid={!!fieldState.error}>
+          <Field.Label>{label}</Field.Label>
           <UiSelect
             {...field}
             value={options.find(
-              (opt) =>
-                opt.value === (field.value as SelectOptionsType)?.value
+              (opt) => opt.value === (field.value as SelectOptionsType)?.value
             )}
             isClearable
-            onChange={(val) => field.onChange((val as SelectOptionsType)?.value)}
+            onChange={(val) =>
+              field.onChange((val as SelectOptionsType)?.value)
+            }
             placeholder={placeholder}
             options={options}
           />
-        )}
-      />
-      <Field.ErrorText>
-        {typeof errors?.[fieldName]?.message === "string"
-          ? errors[fieldName]?.message
-          : ""}
-      </Field.ErrorText>
-    </Field.Root>
+          <FieldErrorText>{fieldState.error?.message || ""}</FieldErrorText>
+        </Field.Root>
+      )}
+    />
   );
 }
 export function renderInputFile<T extends FieldValues>({
   fieldName,
   label,
   control,
-  errors,
 }: RenderInputFileProps<T>) {
   return (
-    <Field.Root invalid={!!errors?.[fieldName]}>
-      <Field.Label>{label}</Field.Label>
-      <Controller
-        name={fieldName}
-        control={control}
-        render={({ field }) => (
+    <Controller
+      name={fieldName}
+      control={control}
+      render={({ field, fieldState }) => (
+        <Field.Root invalid={!!fieldState.error}>
+          <Field.Label>{label}</Field.Label>
           <FileUpload.Root>
             <FileUpload.HiddenInput
               onChange={(e) => field.onChange(e.target?.files?.[0])}
@@ -118,13 +117,50 @@ export function renderInputFile<T extends FieldValues>({
               </FileUpload.Trigger>
             </Input>
           </FileUpload.Root>
-        )}
-      />
-      <Field.ErrorText>
-        {typeof errors?.[fieldName]?.message === "string"
-          ? errors[fieldName]?.message
-          : ""}
-      </Field.ErrorText>
-    </Field.Root>
+        </Field.Root>
+      )}
+    />
+  );
+}
+
+export function renderRadio<T extends FieldValues>({
+  fieldName,
+  label,
+  control,
+  options,
+  width= "auto"
+}: {
+  fieldName: FieldPath<T>;
+  label?: string;
+  control: Control<T>;
+  options: SelectOptionsType[];
+  width? : string | number;
+}) {
+  return (
+    <Controller
+      name={fieldName}
+      control={control}
+      render={({ field, fieldState }) => (
+        <Field.Root invalid={!!fieldState.error} width={width}>
+          <Field.Label mb={1}>{label}</Field.Label>
+          <RadioGroup.Root
+            value={field.value}
+            onValueChange={(e) => field.onChange(e.value)}
+            colorPalette="blue"
+          >
+            <Wrap gap={3}>
+              {options.map((option) => (
+                <RadioGroup.Item value={option.value}>
+                  <RadioGroup.ItemHiddenInput />
+                  <RadioGroup.ItemIndicator />
+                  <RadioGroup.ItemText>{option.label}</RadioGroup.ItemText>
+                </RadioGroup.Item>
+              ))}
+            </Wrap>
+          </RadioGroup.Root>
+          <FieldErrorText>{fieldState.error?.message || ""}</FieldErrorText>
+        </Field.Root>
+      )}
+    />
   );
 }
