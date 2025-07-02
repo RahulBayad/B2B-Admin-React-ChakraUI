@@ -71,7 +71,7 @@ export const DataTable = ({
   FilterDialog,
 }: DataTableProps) => {
   const [rowSelection, setRowSelection] = useState({});
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
     left: [],
     right: [],
@@ -113,34 +113,7 @@ export const DataTable = ({
         >
           <Input placeholder="Search..." size="sm" />
         </InputGroup>
-        {/* <Button height="40px" width="40px" variant="ghost" rounded="full">
-          <ColumnsIcon style={{ height: "16px", width: "16px" }} />
-        </Button> */}
 
-        {/* <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          className="mui-menu"
-        >
-          {table.getAllColumns().map((column, index: number) => (
-            <MenuItem style={{ py: 1, px: 1, fontSize: 13 }} key={index}>
-              <label htmlFor={`visibility-${column.id}`}>
-                <Checkbox
-                  id={`visibility-${column.id}`}
-                  size="small"
-                  style={{ p: 0, mr: 1 }}
-                  checked={column.getIsVisible()}
-                  disabled={!column.getCanHide()}
-                  onChange={column.getToggleVisibilityHandler()}
-                  disableRipple
-                />
-                {column.columnDef.header}
-              </label>
-            </MenuItem>
-          ))}
-        </Menu> */}
         <Box className="flex gap-1">
           <Menu.Root closeOnSelect={false}>
             <Menu.Trigger asChild>
@@ -426,6 +399,7 @@ export const DataTable = ({
                     right={
                       header.column.getIsPinned() === "right" ? 0 : undefined
                     }
+                    fontSize={13}
                     zIndex={2}
                   >
                     <div className="flex justify-between items-center pr-1 table-header">
@@ -519,7 +493,7 @@ export const DataTable = ({
                       cell.column.getIsPinned() === "right" ? 0 : undefined
                     }
                     zIndex={10}
-                    fontSize={13}
+                    fontSize={12}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </Table.Cell>
@@ -536,6 +510,7 @@ export const DataTable = ({
         mt={3}
         display="flex"
         justifyContent="space-between"
+        fontSize={13}
       >
         <Box display="flex" flexWrap="nowrap" alignItems="center" gap={2}>
           <Text textWrap="nowrap">Page size</Text>
@@ -543,9 +518,10 @@ export const DataTable = ({
             onChange={(e) => {
               table.setPageSize(e.target?.value);
             }}
+            size="sm"
+            fontSize={13}
           >
             <NativeSelect.Field>
-              <option value={5}>5</option>
               <option value={10}>10</option>
               <option value={25}>25</option>
               <option value={50}>50</option>

@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import {
   Box as BoxIcon,
   BookText,
@@ -13,22 +13,21 @@ import {
   type LucideProps,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router";
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, Text } from "@chakra-ui/react";
 
 const Sidebar = () => {
-
   // const location = useLocation()
-  const location = window.location.pathname
-  console.log("sidebr", location)
 
-  type NavTreeType = { 
+  type NavTreeType = {
     title: string;
     url: string;
-    icon?: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
-    subMenu? : NavTreeType[]
+    icon?: React.ForwardRefExoticComponent<
+      Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+    >;
+    subMenu?: NavTreeType[];
   };
 
-  const navTree:NavTreeType[] = [
+  const navTree: NavTreeType[] = [
     {
       title: "Dashboard",
       url: "/",
@@ -138,56 +137,75 @@ const Sidebar = () => {
     },
   ];
 
-  // Sidebar Items 
+  // Sidebar Items
   const SidebarItem = ({ title, url, icon: Icon, subMenu }: NavTreeType) => {
+    const currentPath = useLocation();
+    const activeLinkPath = currentPath.pathname;
+
     const [subMenuOpen, setSubMenuOpen] = useState(false);
     const toggleSubMenu = () => setSubMenuOpen((prev) => !prev);
+
+    useEffect(() => {
+      activeLinkPath.includes(url) ? setSubMenuOpen(true) : "";
+    }, []);
     return (
       <div className="relative">
         {/* If there is no submenu  */}
         {!subMenu ? (
           <NavLink to={url ? url : "#"}>
-            <Button 
-              width="100%" 
+            <Button
+              width="100%"
               variant="ghost"
-              fontWeight={400} 
+              fontSize="0.825rem"
               padding="0 10px"
               justifyContent="start"
               alignItems="center"
-              color="white"
-              _hover={{ bg: "blue.900"}}
+              gap={4}
+              borderColor="primary.100"
+              borderWidth={activeLinkPath === url ? 1 : 0}
+              bgColor={activeLinkPath === url ? "blue.50" : ""}
+              color={activeLinkPath === url ? "primary.600" : ""}
+              _dark={{
+                border: "none",
+                bg: activeLinkPath === url ? "gray.800" : "",
+                fontWeight: 800,
+              }}
             >
-             {Icon && <Icon size={18} className="stroke-[1.5]"/>} 
-             {title}
+              {Icon && <Icon size={18} style={{ width: "1.1rem" }} />}
+              <Text fontWeight={500}>{title}</Text>
             </Button>
           </NavLink>
         ) : (
-            <Button
-              onClick={() => toggleSubMenu()}
-              width="100%"
-              variant="ghost"
-              fontWeight={400}
-              padding="0 10px"
-              justifyContent="start"
-              alignItems="center"
-              color="white"
-              _hover={{
-                bg: location?.pathname?.includes(url) ? "blue.800" : "blue.900",
-              }}
-              bg={location?.pathname?.includes(url) ? "blue.800" : "" }
-            >
-              {Icon && <Icon size={18} className="stroke-[1.5]"/>}
-              {title}
-              <ChevronDown 
-                style={{height: "15px", width:"15px"}}
-                className={`transition duration-200 absolute float-right right-2
+          <Button
+            onClick={() => toggleSubMenu()}
+            width="100%"
+            variant="ghost"
+            padding="0 10px"
+            justifyContent="start"
+            alignItems="center"
+            gap={4}
+            fontSize="0.825rem"
+            borderWidth={activeLinkPath.includes(url) ? 1 : 0}
+            borderColor="primary.100"
+            bg={activeLinkPath.includes(url) ? "blue.50" : ""}
+            color={activeLinkPath.includes(url) ? "primary.600" : ""}
+            _dark={{
+              border: "none",
+              bg: activeLinkPath.includes(url) ? "gray.800" : "",
+              fontWeight: 800,
+            }}
+          >
+            {Icon && <Icon style={{ width: "1.1rem" }} />}
+            <Text fontWeight={500}>{title}</Text>
+            <ChevronDown
+              style={{ height: "15px", width: "15px" }}
+              className={`transition duration-200 absolute float-right right-2
                   ${subMenuOpen ? "transform-[rotate(180deg)]" : ""}`}
-              />
-            </Button>
-
+            />
+          </Button>
         )}
         {/* Submenu  */}
-        { subMenu && 
+        {subMenu && (
           <div
             className={`flex flex-col duration-200 ease-linear transition-all overflow-hidden ${
               subMenuOpen ? "max-h-96" : "max-h-0"
@@ -196,36 +214,52 @@ const Sidebar = () => {
             {subMenu.map((item, index) => {
               return (
                 <NavLink key={index} to={url + item.url} className="">
-                  <Button 
+                  <Button
                     variant="ghost"
-                    width="100%" 
+                    width="100%"
                     padding="0 10px"
                     textAlign="left"
+                    overflow="hidden"
                     justifyContent="start"
                     alignItems="center"
-                    _hover={{
-                      bg: location?.pathname?.includes(url + item.url) ? "blue.900" : "blue.900",
-                    }}
-                    fontWeight={location?.pathname?.includes(url + item.url) ? "600" : "400" }
-                    color={location?.pathname?.includes(url + item.url) ? "white" : "gray.300" }
+                    gap={4}
+                    fontSize="0.8rem"
+                    color={
+                      activeLinkPath.includes(url + item.url)
+                        ? "primary.600"
+                        : ""
+                    }
                   >
-                    <Dot/>
-                    {item.title}
+                    <Dot style={{ width: "1.1rem" }} />
+                    <Text
+                      fontWeight={500}
+                      textOverflow="ellipsis"
+                      className="text-ellipsis"
+                    >
+                      {item.title}
+                    </Text>
                   </Button>
                 </NavLink>
               );
             })}
           </div>
-        }
+        )}
       </div>
     );
   };
 
   return (
-    <Box borderRightWidth={1} px={2} backgroundColor="blue.950" className="text-sm min-w-[240px] min-h-full overflow-y-auto overflow-x-hidden">
-      <figure style={{padding: "10px 0"}} className="flex justify-center">
-        <img src="/vite.svg" className="w-20" />
-      </figure>
+    <Box
+      borderRightWidth={1}
+      p={2}
+      rounded="md"
+      bg="white"
+      _dark={{
+        bg: "transparent",
+      }}
+      borderWidth={1}
+      className="text-sm min-w-[250px] h-[90dvh] overflow-y-auto overflow-x-hidden"
+    >
       {navTree.map((nav, index) => (
         <div key={index} className="">
           <SidebarItem

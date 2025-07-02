@@ -37,6 +37,7 @@ const Accessibility = () => {
         <Box
           borderWidth={1}
           p={4}
+          boxShadow="inset 1px 1px 6px 0px #ececec"
           className="relative rounded-md flex gap-x-6 gap-y-2"
         >
           {renderRadio<CompanyFormSchema>({

@@ -267,7 +267,6 @@ const FilterDialog: JSX.Element = () => {
   const {
     control,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<FilterFormSchema>({
     resolver: zodResolver(filterSchema),

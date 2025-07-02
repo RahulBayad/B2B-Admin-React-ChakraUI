@@ -1,5 +1,4 @@
-import { Button, Tag } from "@chakra-ui/react";
-import React from "react";
+import { Button } from "@chakra-ui/react";
 
 type StatusProps = {
   label: "Active" | "Verified" | "Inactive" | "Unverified" | "Pending";
@@ -12,16 +11,22 @@ const StatusTag = (props: StatusProps) => {
       <Button 
         minWidth="auto"
         py={0}
-        px={2}
+        px={3}
         height="auto"
         fontWeight={400}
         variant="plain"
         bgColor="green.100"
         color="green.600"
         borderColor="green.400"
-        fontSize="xs"
+        fontSize="12px"
         letterSpacing="0.2px"
         rounded="full"
+        _dark={{
+          bgColor: "green.900",
+          color: "white",
+          fontWeight: 100,
+          // borderColor: "green.600"
+        }}
       >
         {label}
       </Button>
@@ -32,7 +37,7 @@ const StatusTag = (props: StatusProps) => {
       <Button 
         minWidth="auto"
         py={0}
-        px={2}
+        px={3}
         height="auto"
         fontWeight={400}
         variant="plain"
@@ -42,6 +47,11 @@ const StatusTag = (props: StatusProps) => {
         fontSize="xs"
         letterSpacing="0.2px"
         rounded="full"
+        _dark={{
+          bgColor: "red.800",
+          color: "white",
+          borderColor: "red.600",
+        }}
       >
         {label}
       </Button>
@@ -52,7 +62,7 @@ const StatusTag = (props: StatusProps) => {
       <Button 
         minWidth="auto"
         py={0}
-        px={2}
+        px={3}
         height="auto"
         fontWeight={400}
         variant="plain"
@@ -62,6 +72,11 @@ const StatusTag = (props: StatusProps) => {
         fontSize="xs"
         letterSpacing="0.2px"
         rounded="full"
+        _dark={{
+          bgColor: "yellow.900",
+          color: "white",
+          borderColor: "yellow.600",
+        }}
       >
         {label}
       </Button>
@@ -72,7 +87,7 @@ const StatusTag = (props: StatusProps) => {
     <Button 
         minWidth="auto"
         py={0}
-        px={2}
+        px={3}
         height="auto"
         fontWeight={400}
         variant="plain"
