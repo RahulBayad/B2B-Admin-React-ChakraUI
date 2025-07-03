@@ -1,8 +1,33 @@
-import { Box, Button, Card, Heading, IconButton, Separator } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Card,
+  Field,
+  FieldErrorText,
+  Heading,
+  IconButton,
+  Separator,
+} from "@chakra-ui/react";
 import type { CompanyFormSchema } from "./CreateCompany";
-import { useFieldArray, useFormContext, type ArrayPath, type Control, type FieldPath, type FieldValues } from "react-hook-form";
-import { renderInput, renderInputFile, renderSelect } from "@/components/ui/form/formInput";
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+  type ArrayPath,
+  type Control,
+  type FieldPath,
+  type FieldValues,
+} from "react-hook-form";
+import {
+  renderInput,
+  renderInputFile,
+  renderSelect,
+} from "@/components/ui/form/formInput";
 import { Plus, Trash } from "lucide-react";
+import { Country, State, City } from "country-state-city";
+import { UiSelect, type SelectOptionsType } from "@/components/ui/UISelect";
+import { useMemo } from "react";
 
 export const officeTypes = <T extends FieldValues>({
   name,
@@ -169,6 +194,57 @@ export const officeTypes = <T extends FieldValues>({
 
 const CompanyDetails = () => {
   const { control } = useFormContext<CompanyFormSchema>();
+  const countries = useMemo(() => Country.getAllCountries(), []);
+  const countriesOptions = useMemo(
+    () =>
+      countries.map((country) => {
+        return { label: country.name, value: country.name };
+      }),
+    []
+  );
+
+  const selectedCountry = useWatch({ control, name: "country" });
+  const selectedState = useWatch({ control, name: "state" });
+
+  const selectedCountryCode = useMemo(
+    () =>
+      countries.find((country) => country.name === selectedCountry)?.isoCode,
+    [selectedCountry]
+  );
+
+  const statesOfSelectedCountry = useMemo(
+    () =>
+      selectedCountryCode ? State.getStatesOfCountry(selectedCountryCode) : [],
+    [selectedCountryCode]
+  );
+
+  const stateOptions = useMemo(
+    () =>
+      statesOfSelectedCountry.map((country) => {
+        return { label: country.name, value: country.name };
+      }),
+    [statesOfSelectedCountry]
+  );
+
+  const selectedStateCode = useMemo(
+    () =>
+      statesOfSelectedCountry.find((val) => val.name === selectedState)
+        ?.isoCode,
+    [statesOfSelectedCountry, selectedState]
+  );
+
+  const cityOfSelectedState = useMemo(
+    () => City.getCitiesOfState(selectedCountryCode, selectedStateCode),
+    [selectedCountryCode, selectedStateCode]
+  );
+
+  const cityOptions = useMemo(
+    () =>
+      cityOfSelectedState.map((country) => {
+        return { label: country.name, value: country.name };
+      }),
+    [cityOfSelectedState]
+  );
 
   return (
     <Card.Root>
@@ -272,10 +348,7 @@ const CompanyDetails = () => {
               fieldName: "country",
               label: "Country",
               placeholder: "Select Country",
-              options: [
-                { label: "India", value: "India" },
-                { label: "Nepal", value: "Nepal" },
-              ],
+              options: countriesOptions,
               control,
             })}
 
@@ -283,10 +356,7 @@ const CompanyDetails = () => {
               fieldName: "state",
               label: "State",
               placeholder: "Select State",
-              options: [
-                { label: "Gujarat", value: "Gujarat" },
-                { label: "Maharashtra", value: "Maharashtra" },
-              ],
+              options: stateOptions,
               control,
             })}
 
@@ -294,10 +364,7 @@ const CompanyDetails = () => {
               fieldName: "city",
               label: "City",
               placeholder: "Select City",
-              options: [
-                { label: "Ahmedabad", value: "Ahmedabad" },
-                { label: "Mumbai", value: "Mumbai" },
-              ],
+              options: cityOptions,
               control,
             })}
 
