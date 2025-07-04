@@ -2,15 +2,14 @@ import {
   Box,
   Button,
   Card,
-  Field,
-  FieldErrorText,
+  
   Heading,
   IconButton,
   Separator,
 } from "@chakra-ui/react";
 import type { CompanyFormSchema } from "./CreateCompany";
 import {
-  Controller,
+
   useFieldArray,
   useFormContext,
   useWatch,
@@ -26,7 +25,6 @@ import {
 } from "@/components/ui/form/formInput";
 import { Plus, Trash } from "lucide-react";
 import { Country, State, City } from "country-state-city";
-import { UiSelect, type SelectOptionsType } from "@/components/ui/UISelect";
 import { useMemo } from "react";
 
 export const officeTypes = <T extends FieldValues>({
@@ -234,7 +232,7 @@ const CompanyDetails = () => {
   );
 
   const cityOfSelectedState = useMemo(
-    () => City.getCitiesOfState(selectedCountryCode, selectedStateCode),
+    () => City.getCitiesOfState(selectedCountryCode as any, selectedStateCode as any),
     [selectedCountryCode, selectedStateCode]
   );
 

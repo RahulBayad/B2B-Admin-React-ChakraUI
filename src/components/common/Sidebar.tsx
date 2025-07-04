@@ -13,7 +13,7 @@ import {
   type LucideProps,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router";
-import { Box, Button, Text } from "@chakra-ui/react";
+import { Box, Button, Heading, Image, Text, Wrap } from "@chakra-ui/react";
 
 const Sidebar = () => {
   // const location = useLocation()
@@ -252,14 +252,20 @@ const Sidebar = () => {
     <Box
       borderRightWidth={1}
       p={2}
-      rounded="md"
+      // rounded="md"
       bg="white"
       _dark={{
         bg: "transparent",
       }}
       borderWidth={1}
-      className="text-sm min-w-[250px] h-[90dvh] overflow-y-auto overflow-x-hidden"
+      borderTopWidth={0}
+      className="text-sm min-w-[250px] overflow-y-auto overflow-x-hidden"
     >
+      <Wrap alignItems="center" gap={3}>
+        <Image src="/vite.svg" height={11} />
+        <Heading size="xl" fontWeight={500}>Vite Admin</Heading>
+      </Wrap>
+      <br />
       {navTree.map((nav, index) => (
         <div key={index} className="">
           <SidebarItem

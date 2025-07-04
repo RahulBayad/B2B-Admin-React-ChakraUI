@@ -44,7 +44,7 @@ import {
   RotateCcw,
   Search,
 } from "lucide-react";
-import { useCallback, useState, type JSX } from "react";
+import { useCallback, useMemo, useState, type JSX } from "react";
 import { LuChevronLeft, LuChevronRight, LuFileUp } from "react-icons/lu";
 
 type DataTableProps = {
@@ -301,14 +301,16 @@ export const DataTable = ({
 
     const sortASC = (columnID: string) => {
       table.setSorting((prev) => {
-        const filteredCols = prev.filter((col) => col.id !== columnID);
-        return [...filteredCols, { id: columnID, desc: false }];
-      });
-    };
+      //   const filteredCols = prev.filter((col) => col.id !== columnID);
+      //   return [...filteredCols, { id: columnID, desc: false }];
+        return [{ id: columnID, desc: false}]
+      })
+    }
     const sortDESC = (columnID: string) => {
       table.setSorting((prev) => {
-        const filteredCols = prev.filter((col) => col.id !== columnID);
-        return [...filteredCols, { id: columnID, desc: true }];
+        // const filteredCols = prev.filter((col) => col.id !== columnID);
+        // return [...filteredCols, { id: columnID, desc: true }];
+        return [{ id: columnID, desc: true}]
       });
     };
 

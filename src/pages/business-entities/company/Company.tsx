@@ -246,7 +246,7 @@ const filterOptions = {
   }),
 };
 
-const FilterDialog: JSX.Element = () => {
+const FilterDialog = () => {
   const filterSchema = z.object({
     businessType: z.array(z.string()).nullable().optional(),
     status: z.array(z.string()).optional(),
@@ -330,7 +330,7 @@ const FilterDialog: JSX.Element = () => {
       />
       <Field.ErrorText>{errors[name]?.message}</Field.ErrorText>
     </Field.Root>
-  );
+  )
 
   const submitHandler: SubmitHandler<FilterFormSchema> = (data) => {
     console.log("form data", data);
@@ -412,8 +412,8 @@ const FilterDialog: JSX.Element = () => {
         </Dialog.Positioner>
       </Dialog.Root>
     </>
-  );
-};
+  )
+}
 
 const columns: TableColumnDef<CompanyTable>[] = [
   { accessorKey: "name", header: "Company", width: 150 },

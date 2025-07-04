@@ -7,11 +7,11 @@ import { Suspense } from 'react'
 const Layout = () => {
   console.log("layout")
   return (
-    <div className='h-screen w-screen overflow-hidden '>
-      <Header/>
-      <Box p={2} bgColor="gray.50" _dark={{bgColor: "transparent"}} className='h-full w-full flex gap-3 p-7'>
+    <div className='h-screen w-screen overflow-hidden flex'>
         <Sidebar/>  
-        <Box overflow="auto" height="92%" width="full" >
+      <Box bgColor="gray.50" _dark={{bgColor: "transparent"}} className='h-full w-full  gap-3'>
+      <Header/>
+        <Box overflow="auto" height="92%" width="full" p={3} >
           <Suspense fallback={
             <div className='h-full w-full flex items-center justify-center'>
               <Spinner/>
