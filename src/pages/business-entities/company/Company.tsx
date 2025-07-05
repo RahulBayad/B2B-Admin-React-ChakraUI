@@ -1,4 +1,4 @@
-import  { type JSX } from "react";
+import  { Suspense, type JSX } from "react";
 import {
   DataTable,
   type TableColumnDef,
@@ -35,6 +35,8 @@ type CompanyTable = {
   mobile: string;
   status: string;
 };
+
+
 
 const companyTableData: CompanyTable[] = [
   {
@@ -468,9 +470,11 @@ const Company = () => {
       <Card.Body>
         <div className="flex justify-between items-center mb-2">
           <Heading size="lg">Company</Heading>
+            <Link to={"/business-entities/companies/create"}>
           <Button size="xs">
-            <Link to={"/business-entities/companies/create"}>Add New</Link>
+            Add New
           </Button>
+            </Link>
           {/* <Button size="xs"><Link to={"#"}>Add New</Link></Button> */}
         </div>
         <DataTable

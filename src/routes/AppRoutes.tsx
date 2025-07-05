@@ -1,7 +1,10 @@
-import React, { lazy } from 'react'
+import React, { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import PublicRoutes from './PublicRoutes'
 import ProtectedRoutes from './ProtectedRoutes'
+// import CreateCompany from '@/pages/business-entities/company/components/CreateCompany'
+// import Company from '@/pages/business-entities/company/Company'
+// import Members from '@/pages/business-entities/members/Members'
 
 const Dashboard = lazy(()=> import('@/pages/dashboard/Dashboard'));
 
@@ -78,7 +81,7 @@ const AppRoutes = () => {
                     path: "/business-entities",
                     children : [
                         { path: "companies", element: <Company/> },
-                        { path: "companies/create", element : <CreateCompany/> },
+                        { path: "companies/create", element : <CreateCompany />},
                         { path: "members", element: <Members/> },
                         { path: "partners", element: <Partner/> },
                         { path: "inquiries", element: <Inquiries/> },

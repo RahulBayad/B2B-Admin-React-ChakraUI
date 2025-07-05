@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   Heading,
+  Spinner,
   Tabs,
   Wrap,
 } from "@chakra-ui/react";
@@ -11,11 +12,19 @@ import { FormProvider, useForm, type FieldErrors } from "react-hook-form";
 import { z } from "zod";
 
 import { Link } from "react-router-dom";
-import BankDetails from "./BankDetails";
-import Accessibility from "./Accessibility";
-import CompanyDetails from "./CompanyDetails";
-import KycDocuments from "./KycDocuments";
-import References from "./References";
+// import BankDetails from "./BankDetails";
+// import Accessibility from "./Accessibility";
+// import CompanyDetails from "./CompanyDetails";
+// import KycDocuments from "./KycDocuments";
+// import References from "./References";
+import { lazy, Suspense } from "react";
+import Loading from "@/components/ui/Loading";
+
+const BankDetails = lazy(()=> import("./BankDetails"))
+const Accessibility = lazy(()=> import("./Accessibility"))
+const CompanyDetails = lazy(()=> import("./CompanyDetails"))
+const KycDocuments = lazy(()=> import("./KycDocuments"))
+const References = lazy(()=> import("./References"))
 
 const fileSchema = z
   .instanceof(File)
@@ -265,27 +274,37 @@ const CompanyForm = () => {
 
             {/* Company Details */}
             <Tabs.Content value="companyDetails">
-              <CompanyDetails />
+              <Suspense fallback={<Loading/>}>
+                <CompanyDetails />
+              </Suspense>
             </Tabs.Content>
 
             {/* KYC Verification */}
             <Tabs.Content value="kycDocs">
+               <Suspense fallback={<Loading/>}>
               <KycDocuments />
+               </Suspense>
             </Tabs.Content>
 
             {/* Bank Details */}
             <Tabs.Content value="bankDetails">
+               <Suspense fallback={<Loading/>}>
               <BankDetails />
+               </Suspense>
             </Tabs.Content>
 
             {/* References */}
             <Tabs.Content value="references">
+               <Suspense fallback={<Loading/>}>
               <References />
+               </Suspense>
             </Tabs.Content>
 
             {/* Accessibility */}
             <Tabs.Content value="accesibility">
+               <Suspense fallback={<Loading/>}>
               <Accessibility />
+               </Suspense>
             </Tabs.Content>
 
             {/* Member Management */}

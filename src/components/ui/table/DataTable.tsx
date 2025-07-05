@@ -44,7 +44,7 @@ import {
   RotateCcw,
   Search,
 } from "lucide-react";
-import { useCallback, useMemo, useState, type JSX } from "react";
+import React, { useCallback, useState, type JSX } from "react";
 import { LuChevronLeft, LuChevronRight, LuFileUp } from "react-icons/lu";
 
 type DataTableProps = {
@@ -288,32 +288,7 @@ export const DataTable = ({
     );
   }, [columns]);
 
-  const TableHeaderMenu = useCallback(({ header }) => {
-    const handlePinLeft = () => {
-      header.column.pin("left");
-    };
-    const handlePinRight = () => {
-      header.column.pin("right");
-    };
-    const handleUnpin = () => {
-      header.column.pin(false);
-    };
-
-    const sortASC = (columnID: string) => {
-      table.setSorting((prev) => {
-      //   const filteredCols = prev.filter((col) => col.id !== columnID);
-      //   return [...filteredCols, { id: columnID, desc: false }];
-        return [{ id: columnID, desc: false}]
-      })
-    }
-    const sortDESC = (columnID: string) => {
-      table.setSorting((prev) => {
-        // const filteredCols = prev.filter((col) => col.id !== columnID);
-        // return [...filteredCols, { id: columnID, desc: true }];
-        return [{ id: columnID, desc: true}]
-      });
-    };
-
+  const TableHeaderMenu = React.memo(({ header, table }) => {
     return (
       <>
         <Menu.Root>
@@ -334,23 +309,23 @@ export const DataTable = ({
               <Menu.Content>
                 <Menu.Item
                   value="1"
-                  onClick={() => sortASC(header.column.columnDef.accessorKey)}
+                  onClick={() => table.setSorting([{ id: header.column.columnDef.accessorKey, desc: false }])}
                 >
                   <ArrowUp className="h-4 w-4" /> Sort ASC
                 </Menu.Item>
                 <Menu.Item
                   value="2"
-                  onClick={() => sortDESC(header.column.columnDef.accessorKey)}
+                  onClick={() => table.setSorting([{ id: header.column.columnDef.accessorKey, desc: true }])}
                 >
                   <ArrowDown className="h-4 w-4" /> Sort DESC
                 </Menu.Item>
-                <Menu.Item value="3" onClick={handlePinLeft}>
+                <Menu.Item value="3" onClick={()=> header.column.pin("left")}>
                   <CornerUpLeft className="h-4 w-4" /> Pin to Left
                 </Menu.Item>
-                <Menu.Item value="4" onClick={handlePinRight}>
+                <Menu.Item value="4" onClick={()=> header.column.pin("right")}>
                   <CornerUpRight className="h-4 w-4" /> Pin to Right
                 </Menu.Item>
-                <Menu.Item value="5" onClick={handleUnpin}>
+                <Menu.Item value="5" onClick={()=> header.column.pin(false)}>
                   <RotateCcw className="h-4 w-4" /> Unpin
                 </Menu.Item>
               </Menu.Content>
@@ -359,7 +334,7 @@ export const DataTable = ({
         </Menu.Root>
       </>
     );
-  }, []);
+  });
 
   return (
     <div style={{ display: "grid" }}>
@@ -410,7 +385,7 @@ export const DataTable = ({
                           header.column.columnDef.header,
                           header.getContext()
                         )}
-                        {/* Left pin icon */}
+                        {/* Pin icon */}
                         <IconButton
                           onClick={() =>
                             header.column.pin(
@@ -459,7 +434,7 @@ export const DataTable = ({
                           ""
                         )}
                       </span>
-                      <TableHeaderMenu header={header} />
+                      <TableHeaderMenu header={header} table={table}/>
                     </div>
                   </Table.ColumnHeader>
                 ))}
