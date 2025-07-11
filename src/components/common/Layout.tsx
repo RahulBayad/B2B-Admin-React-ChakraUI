@@ -3,11 +3,14 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { Box, Spinner } from "@chakra-ui/react";
 import { Suspense, useEffect, useState } from "react";
+import { toaster, Toaster } from "../ui/toaster";
 
 const Layout = () => {
   return (
     <div className="h-screen w-screen overflow-hidden flex">
       <Sidebar />
+      
+      <Toaster />
       <Box
         bgColor="gray.50"
         _dark={{ bgColor: "transparent" }}
@@ -15,11 +18,9 @@ const Layout = () => {
       >
         <Header />
         <Box overflow="auto" height="92%" width="full" p={3}>
-          
             <Suspense
               fallback={
                 <div className="h-full w-full flex items-center justify-center">
-                  {console.log('Suspense fallback showing')}
                   <Spinner />
                 </div>
               }
@@ -28,6 +29,7 @@ const Layout = () => {
             </Suspense>
         </Box>
       </Box>
+      
     </div>
   );
 };

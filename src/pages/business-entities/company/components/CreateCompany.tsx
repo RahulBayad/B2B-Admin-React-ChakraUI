@@ -45,77 +45,50 @@ const fileSchema = z
   );
 
 const companyFormSchema = z.object({
+  status: z.string({ required_error: "Status is Required" }).trim(),
   company_name: z
     .string({ required_error: "Company Name is required" })
     .trim()
     .min(2, { message: "Name must be larger than 2 characters" }),
-  ownership: z.string().trim().optional(),
-  owner: z.string().trim().optional(),
+  owner_name: z.string().trim().optional(),
+  ownership_type: z.string().trim().optional(),
   establishment_year: z.coerce.number().max(2025).nullable().optional(),
+  industry: z.string().trim().optional(),
+  business_category: z.string().trim().optional(),
   company_type: z.string().trim().optional(),
   company_website: z.string().trim().optional(),
-  company_logo_brochure: z.string().trim().optional(),
-  status: z.string({ required_error: "Status is Required" }).trim(),
-  country: z.string().trim().optional(),
-  state: z.string().trim().optional(),
-  city: z.string().trim().optional(),
-  zip_postal_code: z.coerce.number().nullable().optional(),
-  address: z.string().trim().optional(),
-  primary_contact_number: z.coerce.number().nullable().optional(),
-  primary_contact_number_code: z.coerce.number().nullable().optional(), // Made optional to avoid missing input issue
-  alternate_contact_number: z.coerce.number().nullable().optional(),
-  alternate_contact_country_code: z.coerce.number().nullable().optional(),
+  company_logo_url: fileSchema,
+  primary_contact_no: z.coerce.number().nullable().optional(),
+  primary_contact_no_code: z.coerce.number().nullable().optional(), // Made optional to avoid missing input issue
+  alternate_contact_no: z.coerce.number().nullable().optional(),
+  alternate_contact_no_code: z.coerce.number().nullable().optional(),
   primary_email: z
     .string()
     .trim()
     .min(1, { message: "Primary Email is required" }),
   alternate_email: z.string().trim().optional(),
-  notification_email: z.string().trim().optional(),
   gst_number: z.string().trim().optional(),
   pan_number: z.string().trim().optional(),
   trn_number: z.string().trim().optional(),
   tan_number: z.string().trim().optional(),
-  primary_business_type: z.string().trim().optional(),
-  primary_business_category: z.string().trim().optional(),
-  sub_category: z.string().trim().optional(),
+  
+  // sub_category: z.string().trim().optional(),
   interested_in: z.string().trim().optional(),
   kyc_verification: z
     .object({
-      gst_certificate: z
-        .object({
-          file: fileSchema,
-          remark: z.string().trim().optional(),
-          verified: z.string().trim().optional(),
-        })
-        .nullable()
-        .optional(),
-      "194Q_declaration": z
-        .object({
-          file: fileSchema,
-          remark: z.string().trim().optional(),
-          verified: z.string().trim().optional(),
-        })
-        .nullable()
-        .optional(),
-      pan_card: z
-        .object({
-          file: fileSchema,
-          remark: z.string().trim().optional(),
-          verified: z.string().trim().optional(),
-        })
-        .nullable()
-        .optional(),
-      authority_letter: z
-        .object({
-          file: fileSchema,
-          remark: z.string().trim().optional(),
-          verified: z.string().trim().optional(),
-        })
-        .nullable()
-        .optional(),
-    })
-    .nullable()
-    .optional(),
+      gst_certificate_file : fileSchema,
+      gst_remark: z.string().trim().optional(),
+      gst_verified: z.string().trim().optional(),
+      pan_card_file : fileSchema,
+      pan_card_remark: z.string().trim().optional(),
+      pan_card_verified: z.string().trim().optional(),
+      declaration_194q_file : fileSchema,
+      declaration_194q_remark: z.string().trim().optional(),
+      declaration_194q_verified: z.string().trim().optional(),
+      authority_letter_file : fileSchema,
+      authority_letter_remark: z.string().trim().optional(),
+      authority_letter_verified: z.string().trim().optional(),
+    }).optional().nullable() ,
   headOffice: z
     .object({
       officeName: z.string().trim().nullable().optional(),
@@ -123,16 +96,11 @@ const companyFormSchema = z.object({
       contact_person: z.string().trim().nullable().optional(),
       email: z.string().trim().nullable().optional(),
       phone: z.string().trim().nullable().optional(),
-      address: z
-        .object({
-          country: z.string().trim().nullable().optional(),
-          state: z.string().trim().nullable().optional(),
-          city: z.string().trim().nullable().optional(),
-          pincode: z.coerce.number().nullable().optional(),
-          location: z.string().trim().nullable().optional(),
-        })
-        .nullable()
-        .optional(),
+      country: z.string().trim().nullable().optional(),
+      state: z.string().trim().nullable().optional(),
+      city: z.string().trim().nullable().optional(),
+      pincode: z.coerce.number().nullable().optional(),
+      location: z.string().trim().nullable().optional(),
     })
     .nullable()
     .optional(),
@@ -164,6 +132,7 @@ const companyFormSchema = z.object({
     .array(
       z.object({
         account_number: z.coerce.number().nullable().optional(),
+        account_type: z.string().trim().nullable().optional(),
         account_holder_name: z.string().trim().nullable().optional(),
         bank_name: z.string().trim().nullable().optional(),
         ifsc_code: z.string().trim().nullable().optional(),
@@ -182,22 +151,19 @@ const companyFormSchema = z.object({
     })
     .nullable()
     .optional(),
-  accessibility: z
-    .object({
-      enableBilling: z.string().nullable().optional(),
-      userAccess: z.string().nullable().optional(),
-      billingDoc: z
-        .array(
-          z.object({
-            doc_name: z.string().trim().nullable().optional(),
-            doc_file: fileSchema,
-          })
-        )
-        .nullable()
-        .optional(),
+
+  enableBilling: z.string().nullable().optional(),
+  userAccess: z.string().nullable().optional(),
+  billingDoc: z
+  .array(
+    z.object({
+      doc_name: z.string().trim().nullable().optional(),
+      doc_file: fileSchema,
     })
-    .nullable()
-    .optional(),
+  )
+  .nullable()
+  .optional(),
+    
 });
 
 export type CompanyFormSchema = z.infer<typeof companyFormSchema>;
@@ -232,7 +198,7 @@ const CompanyForm = () => {
 
   const { handleSubmit } = formMethods;
 
-  const submitHandler = (data: CompanyFormSchema) => {
+  const submitHandler = (data: CompanyFormSchema): void => {
     console.log("Data", data);
   };
   const onError = (errors: FieldErrors<CompanyFormSchema>) => {

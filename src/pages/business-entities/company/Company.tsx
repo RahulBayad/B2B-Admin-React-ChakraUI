@@ -1,4 +1,4 @@
-import  { Suspense, type JSX } from "react";
+import { Suspense, useCallback, useEffect, type JSX } from "react";
 import {
   DataTable,
   type TableColumnDef,
@@ -24,6 +24,9 @@ import FilterButton from "@/components/ui/table/FilterButton";
 import StatusTag from "@/components/ui/StatusTag";
 import { MessageCircleMore, Star } from "lucide-react";
 import { EditBtn, MenuBtn, ViewBtn } from "@/components/ui/table/Buttons";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllCompaniesThunk } from "@/redux/thunks/businessEntitiesThunk";
+import type { AppDispatch, RootState } from "@/redux/store";
 
 type CompanyTable = {
   id?: string | number;
@@ -36,8 +39,6 @@ type CompanyTable = {
   status: string;
 };
 
-
-
 const companyTableData: CompanyTable[] = [
   {
     id: 1,
@@ -47,7 +48,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
-    status: "Active"
+    status: "Active",
   },
   {
     id: 2,
@@ -57,7 +58,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
-    status: "Inactive"
+    status: "Inactive",
   },
   {
     id: 1,
@@ -67,7 +68,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
-    status: "Verified"
+    status: "Verified",
   },
   {
     id: 4,
@@ -77,7 +78,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
-    status: "Unverified"
+    status: "Unverified",
   },
   {
     id: 5,
@@ -87,7 +88,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
-    status: "Pending"
+    status: "Pending",
   },
   {
     id: 6,
@@ -97,7 +98,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
-    status: "Active"
+    status: "Active",
   },
   {
     id: 7,
@@ -107,7 +108,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
-    status: "Active"
+    status: "Active",
   },
   {
     id: 8,
@@ -117,7 +118,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
-    status: "Active"
+    status: "Active",
   },
   {
     id: 9,
@@ -127,7 +128,7 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
-    status: "Active"
+    status: "Active",
   },
   {
     id: 10,
@@ -137,17 +138,17 @@ const companyTableData: CompanyTable[] = [
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
-    status: "Active"
+    status: "Active",
   },
   {
-    id:11,
+    id: 11,
     name: "MNO Enterprise 11",
     gst: "231HKV0482KD",
     pan: "HKV0482KD",
     owner: "Ben Stokes",
     email: "benstokes123@gmail.com",
     mobile: "+41 8694562165",
-    status: "Active"
+    status: "Active",
   },
 ];
 
@@ -248,198 +249,27 @@ const filterOptions = {
   }),
 };
 
-const FilterDialog = () => {
-  const filterSchema = z.object({
-    businessType: z.array(z.string()).nullable().optional(),
-    status: z.array(z.string()).optional(),
-    companyType: z.array(z.string()).optional(),
-    continent: z.array(z.string()).optional(),
-    country: z.array(z.string()).optional(),
-    state: z.array(z.string()).optional(),
-    city: z.array(z.string()).optional(),
-    interested: z.array(z.string()).optional(),
-    brand: z.array(z.string()).optional(),
-    category: z.array(z.string()).optional(),
-    kyc_verified: z.array(z.string()).optional(),
-    enable_billing: z.array(z.string()).optional(),
-    created_date: z.date().nullable().optional(),
-  });
-  type FilterFormSchema = z.infer<typeof filterSchema>;
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FilterFormSchema>({
-    resolver: zodResolver(filterSchema),
-    defaultValues: {
-      status: [],
-      businessType: [],
-      companyType: [],
-      continent: [],
-      country: [],
-      state: [],
-      city: [],
-      interested: [],
-      brand: [],
-      category: [],
-      kyc_verified: [],
-      enable_billing: [],
-      created_date: null,
-    },
-  });
-
-  const renderMultiSelect = (
-    name: keyof FilterFormSchema,
-    label: string,
-    items: ListCollection<{ value: string; label: string }>
-  ) => (
-    <Field.Root>
-      <Controller
-        name={name}
-        control={control}
-        render={({ field }) => (
-          <Select.Root
-            multiple
-            collection={items}
-            size="sm"
-            value={(field.value as string[]) || []}
-            onValueChange={(details) => field.onChange(details.value)}
-          >
-            <Select.HiddenSelect />
-            <Select.Label>{label}</Select.Label>
-            <Select.Control>
-              <Select.Trigger>
-                <Select.ValueText placeholder={`Select ${label}`} />
-              </Select.Trigger>
-              <Select.IndicatorGroup>
-                <Select.ClearTrigger />
-                <Select.Indicator />
-              </Select.IndicatorGroup>
-            </Select.Control>
-            <Select.Positioner>
-              <Select.Content>
-                {items.items.map((item) => (
-                  <Select.Item item={item} key={item.value}>
-                    {item.label}
-                    <Select.ItemIndicator />
-                  </Select.Item>
-                ))}
-              </Select.Content>
-            </Select.Positioner>
-          </Select.Root>
-        )}
-      />
-      <Field.ErrorText>{errors[name]?.message}</Field.ErrorText>
-    </Field.Root>
-  )
-
-  const submitHandler: SubmitHandler<FilterFormSchema> = (data) => {
-    console.log("form data", data);
-  };
-  return (
-    <>
-      <Dialog.Root>
-        <Dialog.Trigger asChild>
-          <FilterButton />
-        </Dialog.Trigger>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content maxWidth={800}>
-            <Dialog.CloseTrigger />
-            <Dialog.Header>
-              <Dialog.Title>Filters</Dialog.Title>
-            </Dialog.Header>
-            <Dialog.Body>
-              <form id="filterForm" onSubmit={handleSubmit(submitHandler)}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {renderMultiSelect(
-                    "businessType",
-                    "Business Type",
-                    filterOptions.businessType
-                  )}
-                  {renderMultiSelect("status", "Status", filterOptions.status)}
-                  {renderMultiSelect(
-                    "companyType",
-                    "Company Type",
-                    filterOptions.companyType
-                  )}
-                  {renderMultiSelect(
-                    "continent",
-                    "Continent",
-                    filterOptions.continent
-                  )}
-                  {renderMultiSelect(
-                    "country",
-                    "Country",
-                    filterOptions.country
-                  )}
-                  {renderMultiSelect("state", "State", filterOptions.state)}
-                  {renderMultiSelect("city", "City", filterOptions.city)}
-                  {renderMultiSelect(
-                    "interested",
-                    "Interested In",
-                    filterOptions.interested
-                  )}
-                  {renderMultiSelect("brand", "Brand", filterOptions.brand)}
-                  {renderMultiSelect(
-                    "category",
-                    "Category",
-                    filterOptions.category
-                  )}
-                  {renderMultiSelect(
-                    "kyc_verified",
-                    "KYC Verification",
-                    filterOptions.kyc_verified
-                  )}
-                  {renderMultiSelect(
-                    "enable_billing",
-                    "Billing Status",
-                    filterOptions.enable_billing
-                  )}
-                </div>
-              </form>
-            </Dialog.Body>
-            <Dialog.Footer>
-              <Dialog.ActionTrigger asChild>
-                <Button variant="outline">Cancel</Button>
-              </Dialog.ActionTrigger>
-              <Dialog.ActionTrigger asChild>
-              <Button variant="solid" type="submit" form="filterForm">
-                Apply
-              </Button>
-              </Dialog.ActionTrigger>
-            </Dialog.Footer>
-          </Dialog.Content>
-        </Dialog.Positioner>
-      </Dialog.Root>
-    </>
-  )
-}
-
 const columns: TableColumnDef<CompanyTable>[] = [
   { accessorKey: "name", header: "Company", width: 150 },
-  { 
-    accessorKey: "status", 
-    header: "Status", 
+  {
+    accessorKey: "status",
+    header: "Status",
     width: 150,
-    cell : (props) => {
-      const { status } = props.row.original
-      return (
-        <StatusTag label={status}/>
-      )
-    }
+    cell: (props) => {
+      const { status } = props.row.original;
+      return <StatusTag label={status} />;
+    },
   },
   { accessorKey: "gst", header: "GST", width: 150 },
   { accessorKey: "pan", header: "PAN", width: 150 },
   { accessorKey: "owner", header: "Owner Name", width: 150 },
   { accessorKey: "email", header: "Email", width: 150 },
   { accessorKey: "mobile", header: "Contact", width: 150 },
-  { 
-    id: "action", 
-    header: "Action", 
+  {
+    id: "action",
+    header: "Action",
     width: 150,
-    cell : (props) => {
+    cell: (props) => {
       // const { id } = props.row.original
       return (
         <Wrap gap={1} flexWrap="nowrap">
@@ -452,35 +282,221 @@ const columns: TableColumnDef<CompanyTable>[] = [
             <Portal>
               <Menu.Positioner>
                 <Menu.Content>
-                  <Menu.Item value="1"><MessageCircleMore width={16}/>Message</Menu.Item>
-                  <Menu.Item value="2"><Star width={16}/>Favourite</Menu.Item>
+                  <Menu.Item value="1">
+                    <MessageCircleMore width={16} />
+                    Message
+                  </Menu.Item>
+                  <Menu.Item value="2">
+                    <Star width={16} />
+                    Favourite
+                  </Menu.Item>
                 </Menu.Content>
               </Menu.Positioner>
             </Portal>
           </Menu.Root>
         </Wrap>
-      )
-    }
+      );
+    },
   },
 ];
 
+
 const Company = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  const { data } = useSelector((state: RootState) => state?.businessEntity);
+
+  const FilterDialog = useCallback(() => {
+    const filterSchema = z.object({
+      businessType: z.array(z.string()).nullable().optional(),
+      status: z.array(z.string()).optional(),
+      companyType: z.array(z.string()).optional(),
+      continent: z.array(z.string()).optional(),
+      country: z.array(z.string()).optional(),
+      state: z.array(z.string()).optional(),
+      city: z.array(z.string()).optional(),
+      interested: z.array(z.string()).optional(),
+      brand: z.array(z.string()).optional(),
+      category: z.array(z.string()).optional(),
+      kyc_verified: z.array(z.string()).optional(),
+      enable_billing: z.array(z.string()).optional(),
+      created_date: z.date().nullable().optional(),
+    });
+    type FilterFormSchema = z.infer<typeof filterSchema>;
+
+    const {
+      control,
+      handleSubmit,
+      formState: { errors },
+    } = useForm<FilterFormSchema>({
+      resolver: zodResolver(filterSchema),
+      defaultValues: {
+        status: [],
+        businessType: [],
+        companyType: [],
+        continent: [],
+        country: [],
+        state: [],
+        city: [],
+        interested: [],
+        brand: [],
+        category: [],
+        kyc_verified: [],
+        enable_billing: [],
+        created_date: null,
+      },
+    });
+
+    const renderMultiSelect = (
+      name: keyof FilterFormSchema,
+      label: string,
+      items: ListCollection<{ value: string; label: string }>
+    ) => (
+      <Field.Root>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field }) => (
+            <Select.Root
+              multiple
+              collection={items}
+              size="sm"
+              value={(field.value as string[]) || []}
+              onValueChange={(details) => field.onChange(details.value)}
+            >
+              <Select.HiddenSelect />
+              <Select.Label>{label}</Select.Label>
+              <Select.Control>
+                <Select.Trigger>
+                  <Select.ValueText placeholder={`Select ${label}`} />
+                </Select.Trigger>
+                <Select.IndicatorGroup>
+                  <Select.ClearTrigger />
+                  <Select.Indicator />
+                </Select.IndicatorGroup>
+              </Select.Control>
+              <Select.Positioner>
+                <Select.Content>
+                  {items.items.map((item) => (
+                    <Select.Item item={item} key={item.value}>
+                      {item.label}
+                      <Select.ItemIndicator />
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Positioner>
+            </Select.Root>
+          )}
+        />
+        <Field.ErrorText>{errors[name]?.message}</Field.ErrorText>
+      </Field.Root>
+    );
+
+    const submitHandler: SubmitHandler<FilterFormSchema> = (data) => {
+      console.log("form data", data);
+    };
+    return (
+      <>
+        <Dialog.Root>
+          <Dialog.Trigger asChild>
+            <FilterButton />
+          </Dialog.Trigger>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content maxWidth={800}>
+              <Dialog.CloseTrigger />
+              <Dialog.Header>
+                <Dialog.Title>Filters</Dialog.Title>
+              </Dialog.Header>
+              <Dialog.Body>
+                <form id="filterForm" onSubmit={handleSubmit(submitHandler)}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {renderMultiSelect(
+                      "businessType",
+                      "Business Type",
+                      filterOptions.businessType
+                    )}
+                    {renderMultiSelect(
+                      "status",
+                      "Status",
+                      filterOptions.status
+                    )}
+                    {renderMultiSelect(
+                      "companyType",
+                      "Company Type",
+                      filterOptions.companyType
+                    )}
+                    {renderMultiSelect(
+                      "continent",
+                      "Continent",
+                      filterOptions.continent
+                    )}
+                    {renderMultiSelect(
+                      "country",
+                      "Country",
+                      filterOptions.country
+                    )}
+                    {renderMultiSelect("state", "State", filterOptions.state)}
+                    {renderMultiSelect("city", "City", filterOptions.city)}
+                    {renderMultiSelect(
+                      "interested",
+                      "Interested In",
+                      filterOptions.interested
+                    )}
+                    {renderMultiSelect("brand", "Brand", filterOptions.brand)}
+                    {renderMultiSelect(
+                      "category",
+                      "Category",
+                      filterOptions.category
+                    )}
+                    {renderMultiSelect(
+                      "kyc_verified",
+                      "KYC Verification",
+                      filterOptions.kyc_verified
+                    )}
+                    {renderMultiSelect(
+                      "enable_billing",
+                      "Billing Status",
+                      filterOptions.enable_billing
+                    )}
+                  </div>
+                </form>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Dialog.ActionTrigger asChild>
+                  <Button variant="outline">Cancel</Button>
+                </Dialog.ActionTrigger>
+                <Dialog.ActionTrigger asChild>
+                  <Button variant="solid" type="submit" form="filterForm">
+                    Apply
+                  </Button>
+                </Dialog.ActionTrigger>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Dialog.Root>
+      </>
+    );
+  }, []);
+  console.log("Data is", data)
+
+  useEffect(() => {
+    dispatch(fetchAllCompaniesThunk());
+  }, []);
+
   return (
     <Card.Root borderRadius="lg" minHeight="full">
       <Card.Body>
         <div className="flex justify-between items-center mb-2">
           <Heading size="lg">Company</Heading>
-            <Link to={"/business-entities/companies/create"}>
-          <Button size="xs">
-            Add New
-          </Button>
-            </Link>
+          <Link to={"/business-entities/companies/create"}>
+            <Button size="xs">Add New</Button>
+          </Link>
           {/* <Button size="xs"><Link to={"#"}>Add New</Link></Button> */}
         </div>
         <DataTable
           columns={columns}
           data={companyTableData}
-          FilterDialog={FilterDialog}
+          FilterDialog={() => FilterDialog()}
           selectable
         />
       </Card.Body>

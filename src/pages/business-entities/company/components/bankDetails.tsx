@@ -1,4 +1,4 @@
-import { renderInput } from "@/components/ui/form/formInput";
+import { renderInput, renderSelect } from "@/components/ui/form/formInput";
 import { Box, Button, Card, Heading, IconButton } from "@chakra-ui/react";
 import { Plus, Trash } from "lucide-react";
 import {
@@ -66,6 +66,17 @@ const BankDetails = () => {
                       control: control,
                       placeholder: "e.g. 203XXXXXXX33...",
                       inputType: "number",
+                    })}
+                    {renderSelect<CompanyFormSchema>({
+                      fieldName:
+                        `bank_details.${index}.account_type`,
+                      label: "Account Type",
+                      options: [
+                        {label: "Savings", value: "Savings"},
+                        {label: "Current", value: "Current"},
+                      ],
+                      control: control,
+                      placeholder: "Select Account Type",
                     })}
                     {renderInput<CompanyFormSchema>({
                       fieldName:

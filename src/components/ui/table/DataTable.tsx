@@ -290,7 +290,6 @@ export const DataTable = ({
 
   const TableHeaderMenu = React.memo(({ header, table }) => {
     return (
-      <>
         <Menu.Root>
           <Menu.Trigger asChild>
             <IconButton
@@ -299,7 +298,9 @@ export const DataTable = ({
               height="30px"
               rounded="full"
               variant="subtle"
+              zIndex={2}
               className="tableMenuBtn"
+              
             >
               <EllipsisVerticalIcon style={{ height: "14px", width: "14px" }} />
             </IconButton>
@@ -310,8 +311,9 @@ export const DataTable = ({
                 <Menu.Item
                   value="1"
                   onClick={() => table.setSorting([{ id: header.column.columnDef.accessorKey, desc: false }])}
+                  // onClick={header.column.getToggleSortingHandler()}
                 >
-                  <ArrowUp className="h-4 w-4" /> Sort ASC
+                  <ArrowUp className="h-4 w-4" /> Sort Column
                 </Menu.Item>
                 <Menu.Item
                   value="2"
@@ -332,7 +334,6 @@ export const DataTable = ({
             </Menu.Positioner>
           </Portal>
         </Menu.Root>
-      </>
     );
   });
 
@@ -379,7 +380,9 @@ export const DataTable = ({
                     fontSize={13}
                     zIndex={2}
                   >
-                    <div className="flex justify-between items-center pr-1 table-header">
+                    <div 
+                      className="flex justify-between items-center pr-1 table-header" 
+                    >
                       <span className="flex gap-1 items-center">
                         {flexRender(
                           header.column.columnDef.header,

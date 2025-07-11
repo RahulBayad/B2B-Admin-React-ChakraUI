@@ -19,6 +19,7 @@ import {
   Menu,
 } from "lucide-react";
 import { ColorModeButton } from "../ui/color-mode";
+import { toaster } from "../ui/toaster";
 
 const Header = () => {
   console.log("header");

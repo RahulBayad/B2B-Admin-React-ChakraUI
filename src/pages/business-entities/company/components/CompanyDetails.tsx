@@ -269,7 +269,7 @@ const CompanyDetails = () => {
             })}
 
             {renderSelect<CompanyFormSchema>({
-              fieldName: "ownership",
+              fieldName: "ownership_type",
               label: "Ownership Type",
               placeholder: "Select Ownership Type",
               options: [
@@ -280,7 +280,7 @@ const CompanyDetails = () => {
             })}
 
             {renderInput<CompanyFormSchema>({
-              fieldName: "owner",
+              fieldName: "owner_name",
               label: "Owner Name",
               placeholder: "Enter Owner Name",
               control,
@@ -294,21 +294,12 @@ const CompanyDetails = () => {
               control,
             })}
 
-            {renderSelect<CompanyFormSchema>({
-              fieldName: "primary_business_type",
-              label: "Business Type",
-              placeholder: "Select Business Type",
-              options: [
-                { label: "Export", value: "Export" },
-                { label: "Import", value: "Import" },
-              ],
-              control,
-            })}
+            
 
             {renderSelect<CompanyFormSchema>({
-              fieldName: "primary_business_category",
-              label: "Business Category",
-              placeholder: "Select Business Category",
+              fieldName: "industry",
+              label: "Business Industry",
+              placeholder: "Select Business Industry",
               options: [
                 { label: "Electronics", value: "Electronics" },
                 { label: "Engineering", value: "Engineering" },
@@ -317,8 +308,18 @@ const CompanyDetails = () => {
               ],
               control,
             })}
-
             {renderSelect<CompanyFormSchema>({
+              fieldName: "business_category",
+              label: "Business Category",
+              placeholder: "Select Business Category",
+              options: [
+                { label: "Laptop", value: "Laptop" },
+                { label: "Mobile", value: "Mobile" },
+              ],
+              control,
+            })}
+
+            {/* {renderSelect<CompanyFormSchema>({
               fieldName: "sub_category",
               label: "Sub Category",
               placeholder: "Select Sub Category",
@@ -327,7 +328,7 @@ const CompanyDetails = () => {
                 { label: "Import", value: "Import" },
               ],
               control,
-            })}
+            })} */}
 
             {renderInput<CompanyFormSchema>({
               fieldName: "company_website",
@@ -337,12 +338,12 @@ const CompanyDetails = () => {
             })}
 
             {renderInputFile<CompanyFormSchema>({
-              fieldName: "company_logo_brochure",
+              fieldName: "company_logo_url",
               label: "Company Logo (URL)",
               control,
             })}
 
-            {renderSelect<CompanyFormSchema>({
+            {/* {renderSelect<CompanyFormSchema>({
               fieldName: "country",
               label: "Country",
               placeholder: "Select Country",
@@ -379,7 +380,7 @@ const CompanyDetails = () => {
               label: "Address",
               placeholder: "Enter Address",
               control,
-            })}
+            })} */}
           </div>
 
           <br />
@@ -405,7 +406,7 @@ const CompanyDetails = () => {
             })}
 
             {renderInput<CompanyFormSchema>({
-              fieldName: "primary_contact_number",
+              fieldName: "primary_contact_no",
               label: "Primary Contact Number",
               placeholder: "Enter Contact Number",
               inputType: "number",
@@ -413,7 +414,7 @@ const CompanyDetails = () => {
             })}
 
             {renderInput<CompanyFormSchema>({
-              fieldName: "alternate_contact_number",
+              fieldName: "alternate_contact_no",
               label: "Alternate Contact Number",
               placeholder: "Enter Alternate Contact Number",
               inputType: "number",
@@ -506,7 +507,7 @@ const CompanyDetails = () => {
                   inputType: "number",
                 })}
                 {renderSelect<CompanyFormSchema>({
-                  fieldName: "headOffice.address.country",
+                  fieldName: "headOffice.country",
                   label: "Country",
                   options: [
                     { label: "India", value: "India" },
@@ -516,7 +517,7 @@ const CompanyDetails = () => {
                   placeholder: "Select Country",
                 })}
                 {renderSelect<CompanyFormSchema>({
-                  fieldName: "headOffice.address.state",
+                  fieldName: "headOffice.state",
                   label: "State",
                   options: [
                     { label: "Gujarat", value: "Gujarat" },
@@ -526,7 +527,7 @@ const CompanyDetails = () => {
                   placeholder: "Select State",
                 })}
                 {renderSelect<CompanyFormSchema>({
-                  fieldName: "headOffice.address.city",
+                  fieldName: "headOffice.city",
                   label: "City",
                   options: [
                     { label: "Ahmedabad", value: "Ahmedabad" },
@@ -536,14 +537,14 @@ const CompanyDetails = () => {
                   placeholder: "Select City",
                 })}
                 {renderInput<CompanyFormSchema>({
-                  fieldName: "headOffice.address.pincode",
+                  fieldName: "headOffice.pincode",
                   label: "Zip/Postal Code",
                   control: control,
                   placeholder: "e.g. 680291...",
                   inputType: "number",
                 })}
                 {renderInput<CompanyFormSchema>({
-                  fieldName: "headOffice.address.location",
+                  fieldName: "headOffice.location",
                   label: "Location",
                   control: control,
                   placeholder: "e.g. 70/703, Keshav Apartments...",

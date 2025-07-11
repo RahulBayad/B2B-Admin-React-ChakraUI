@@ -27,7 +27,7 @@ const Accessibility = () => {
 
   const { append, remove, fields } = useFieldArray({
     control,
-    name: "accessibility.billingDoc",
+    name: "billingDoc",
   });
 
   return (
@@ -41,7 +41,7 @@ const Accessibility = () => {
           className="relative rounded-md flex gap-x-6 gap-y-2"
         >
           {renderRadio<CompanyFormSchema>({
-            fieldName: "accessibility.enableBilling",
+            fieldName: "enableBilling",
             control,
             label: "Enable Biling",
             options: [
@@ -50,7 +50,7 @@ const Accessibility = () => {
             ],
           })}
           {renderRadio<CompanyFormSchema>({
-            fieldName: "accessibility.userAccess",
+            fieldName: "userAccess",
             control,
             label: "User Access",
             options: [
@@ -102,13 +102,13 @@ const Accessibility = () => {
                   className="grid grid-cols-1 md:grid-cols-2 gap-4"
                 >
                   {renderInput<CompanyFormSchema>({
-                    fieldName: `accessibility.billingDoc.${index}.doc_name`,
+                    fieldName: `billingDoc.${index}.doc_name`,
                     control,
                     label: "Document Name",
                     placeholder: "Enter Document Name",
                   })}
                   {renderInputFile<CompanyFormSchema>({
-                    fieldName: `accessibility.billingDoc.${index}.doc_file`,
+                    fieldName: `billingDoc.${index}.doc_file`,
                     control,
                     label: "Upload Document",
                   })}

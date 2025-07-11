@@ -26,17 +26,17 @@ const KycDocuments = () => {
           <div>
             <div className="">
               {renderInputFile<CompanyFormSchema>({
-                fieldName: "kyc_verification.pan_card.file",
+                fieldName: "kyc_verification.pan_card_file",
                 label: "PAN Certificate",
                 control,
               })}
               {renderInput<CompanyFormSchema>({
-                fieldName: "kyc_verification.pan_card.remark",
+                fieldName: "kyc_verification.pan_card_remark",
                 placeholder: "Enter Remark",
                 control,
               })}
               {renderSelect<CompanyFormSchema>({
-                fieldName: "kyc_verification.pan_card.verified",
+                fieldName: "kyc_verification.pan_card_verified",
                 options: [
                   { label: "Yes", value: "Yes" },
                   { label: "No", value: "No" },
@@ -48,17 +48,17 @@ const KycDocuments = () => {
 
             <div>
               {renderInputFile<CompanyFormSchema>({
-                fieldName: "kyc_verification.gst_certificate.file",
+                fieldName: "kyc_verification.gst_certificate_file",
                 label: "GST Certificate",
                 control,
               })}
               {renderInput<CompanyFormSchema>({
-                fieldName: "kyc_verification.gst_certificate.remark",
+                fieldName: "kyc_verification.gst_remark",
                 placeholder: "Enter Remark",
                 control,
               })}
               {renderSelect<CompanyFormSchema>({
-                fieldName: "kyc_verification.gst_certificate.verified",
+                fieldName: "kyc_verification.gst_verified",
                 options: [
                   { label: "Yes", value: "Yes" },
                   { label: "No", value: "No" },
@@ -70,17 +70,17 @@ const KycDocuments = () => {
 
             <div>
               {renderInputFile<CompanyFormSchema>({
-                fieldName: "kyc_verification.authority_letter.file",
+                fieldName: "kyc_verification.authority_letter_file",
                 label: "Authority Letter",
                 control,
               })}
               {renderInput<CompanyFormSchema>({
-                fieldName: "kyc_verification.authority_letter.remark",
+                fieldName: "kyc_verification.authority_letter_remark",
                 placeholder: "Enter Remark",
                 control,
               })}
               {renderSelect<CompanyFormSchema>({
-                fieldName: "kyc_verification.authority_letter.verified",
+                fieldName: "kyc_verification.authority_letter_verified",
                 options: [
                   { label: "Yes", value: "Yes" },
                   { label: "No", value: "No" },
@@ -92,17 +92,17 @@ const KycDocuments = () => {
 
             <div>
               {renderInputFile<CompanyFormSchema>({
-                fieldName: "kyc_verification.194Q_declaration.file",
+                fieldName: "kyc_verification.declaration_194q_file",
                 label: "194Q Declaration",
                 control,
               })}
               {renderInput<CompanyFormSchema>({
-                fieldName: "kyc_verification.194Q_declaration.remark",
+                fieldName: "kyc_verification.declaration_194q_remark",
                 placeholder: "Enter Remark",
                 control,
               })}
               {renderSelect<CompanyFormSchema>({
-                fieldName: "kyc_verification.194Q_declaration.verified",
+                fieldName: "kyc_verification.declaration_194q_verified",
                 options: [
                   { label: "Yes", value: "Yes" },
                   { label: "No", value: "No" },
@@ -127,21 +127,21 @@ const KycDocuments = () => {
                 <Table.Cell>PAN Card</Table.Cell>
                 <Table.Cell>
                   {renderInputFile<CompanyFormSchema>({
-                    fieldName: "kyc_verification.pan_card.file",
+                    fieldName: "kyc_verification.pan_card_file",
                     // label: "PAN Certificate",
                     control,
                   })}
                 </Table.Cell>
                 <Table.Cell>
                   {renderInput<CompanyFormSchema>({
-                    fieldName: "kyc_verification.pan_card.remark",
+                    fieldName: "kyc_verification.pan_card_remark",
                     placeholder: "Enter Remark",
                     control,
                   })}
                 </Table.Cell>
                 <Table.Cell>
                   {renderSelect<CompanyFormSchema>({
-                    fieldName: "kyc_verification.pan_card.verified",
+                    fieldName: "kyc_verification.pan_card_verified",
                     options: [
                       { label: "Yes", value: "Yes" },
                       { label: "No", value: "No" },
@@ -155,20 +155,20 @@ const KycDocuments = () => {
                 <Table.Cell>GST Certificate</Table.Cell>
                 <Table.Cell>
                   {renderInputFile<CompanyFormSchema>({
-                    fieldName: "kyc_verification.gst_certificate.file",
+                    fieldName: "kyc_verification.gst_certificate_file",
                     control,
                   })}
                 </Table.Cell>
                 <Table.Cell>
                   {renderInput<CompanyFormSchema>({
-                    fieldName: "kyc_verification.gst_certificate.remark",
+                    fieldName: "kyc_verification.gst_remark",
                     placeholder: "Enter Remark",
                     control,
                   })}
                 </Table.Cell>
                 <Table.Cell>
                   {renderSelect<CompanyFormSchema>({
-                    fieldName: "kyc_verification.gst_certificate.verified",
+                    fieldName: "kyc_verification.gst_verified",
                     options: [
                       { label: "Yes", value: "Yes" },
                       { label: "No", value: "No" },
@@ -182,20 +182,20 @@ const KycDocuments = () => {
                 <Table.Cell>Authority Letter</Table.Cell>
                 <Table.Cell>
                   {renderInputFile<CompanyFormSchema>({
-                    fieldName: "kyc_verification.authority_letter.file",
+                    fieldName: "kyc_verification.authority_letter_file",
                     control,
                   })}
                 </Table.Cell>
                 <Table.Cell>
                   {renderInput<CompanyFormSchema>({
-                    fieldName: "kyc_verification.authority_letter.remark",
+                    fieldName: "kyc_verification.authority_letter_remark",
                     placeholder: "Enter Remark",
                     control,
                   })}
                 </Table.Cell>
                 <Table.Cell>
                   {renderSelect<CompanyFormSchema>({
-                    fieldName: "kyc_verification.authority_letter.verified",
+                    fieldName: "kyc_verification.authority_letter_verified",
                     options: [
                       { label: "Yes", value: "Yes" },
                       { label: "No", value: "No" },
@@ -209,20 +209,20 @@ const KycDocuments = () => {
                 <Table.Cell>194Q Declaration</Table.Cell>
                 <Table.Cell>
                   {renderInputFile<CompanyFormSchema>({
-                    fieldName: "kyc_verification.194Q_declaration.file",
+                    fieldName: "kyc_verification.declaration_194q_file",
                     control,
                   })}
                 </Table.Cell>
                 <Table.Cell>
                   {renderInput<CompanyFormSchema>({
-                    fieldName: "kyc_verification.194Q_declaration.remark",
+                    fieldName: "kyc_verification.declaration_194q_remark",
                     placeholder: "Enter Remark",
                     control,
                   })}
                 </Table.Cell>
                 <Table.Cell>
                   {renderSelect<CompanyFormSchema>({
-                    fieldName: "kyc_verification.194Q_declaration.verified",
+                    fieldName: "kyc_verification.declaration_194q_verified",
                     options: [
                       { label: "Yes", value: "Yes" },
                       { label: "No", value: "No" },
