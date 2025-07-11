@@ -27,12 +27,14 @@ export const apiRequest = async <T = any>({
   errorMessage = "Something went wrong",
 }: ApiRequestParams): Promise<T | ApiErrorResponse> => {
   try {
+    console.log("api called")
     const response: AxiosResponse<T> = await api.request({
       url,
       method,
       data,
       ...config,
     });
+    console.log("api response",response)
     return response.data;
   } catch (error: unknown) {
     const err = error as AxiosError;

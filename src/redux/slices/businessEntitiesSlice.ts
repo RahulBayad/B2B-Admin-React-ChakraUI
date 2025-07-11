@@ -9,7 +9,7 @@ interface BusinessEntitiesState {
 
 const initialState: BusinessEntitiesState = {
   loading: false,
-  data: [],
+  data: null,
   error: null,
 };
 

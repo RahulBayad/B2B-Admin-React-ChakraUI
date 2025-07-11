@@ -15,7 +15,7 @@ interface CreateThunkOptions<TPayload, TResult> {
 
 export const createThunk = <TPayload = void, TResult = any>(
   typePrefix: string,
-  apiCall: (payload: TPayload) => Promise<{ status: number; data: TResult; message?: string }>,
+  apiCall: (payload?: TPayload) => Promise<{ status: number; data: TResult; message?: string }>,
   {
     onSuccess,
     onError,
@@ -27,6 +27,7 @@ export const createThunk = <TPayload = void, TResult = any>(
     typePrefix,
     async (payload: TPayload, { rejectWithValue }) => {
       try {
+        console.log("thunk called")
         const response = await apiCall(payload);
         console.log("thunk", response)
         const result = response?.data;

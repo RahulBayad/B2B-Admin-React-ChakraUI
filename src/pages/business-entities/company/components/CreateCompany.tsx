@@ -19,6 +19,8 @@ import { Link } from "react-router-dom";
 // import References from "./References";
 import { lazy, Suspense } from "react";
 import Loading from "@/components/ui/Loading";
+import { useDispatch } from "react-redux";
+import { createCompanyThunk } from "@/redux/thunks/businessEntitiesThunk";
 
 const BankDetails = lazy(()=> import("./BankDetails"))
 const Accessibility = lazy(()=> import("./Accessibility"))
@@ -197,9 +199,10 @@ const CompanyForm = () => {
   });
 
   const { handleSubmit } = formMethods;
-
+  const dispatch = useDispatch()
   const submitHandler = (data: CompanyFormSchema): void => {
     console.log("Data", data);
+    dispatch(createCompanyThunk(data))
   };
   const onError = (errors: FieldErrors<CompanyFormSchema>) => {
     console.error("Validation Errors", errors);
