@@ -27,17 +27,15 @@ export const createThunk = <TPayload = void, TResult = any>(
     typePrefix,
     async (payload: TPayload, { rejectWithValue }) => {
       try {
-        console.log("thunk called")
+        
         const response = await apiCall(payload);
         console.log("thunk", response)
         const result = response?.data;
         if (response?.status) {
-          if (successMessage) {
             toaster.create({
-                title : successMessage,
+                title : successMessage || response?.message || "Siccess",
                 type: "success"
             })
-          };
           if (onSuccess) onSuccess(result, payload);
           return result;
         }
