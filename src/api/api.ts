@@ -16,7 +16,7 @@ interface ApiErrorResponse {
 }
 
 const api = axios.create({
-    baseURL : import.meta.env.VITE_BASE_URL
+    baseURL : import.meta.env.VITE_BASE_URL,
 })
 
 export const apiRequest = async <T = any>({
@@ -27,14 +27,14 @@ export const apiRequest = async <T = any>({
   errorMessage = "Something went wrong",
 }: ApiRequestParams): Promise<T | ApiErrorResponse> => {
   try {
-    console.log("api called")
+    console.log("api data file", data);
+
     const response: AxiosResponse<T> = await api.request({
       url,
       method,
       data,
       ...config,
     });
-    console.log("api response",response)
     return response.data;
   } catch (error: unknown) {
     const err = error as AxiosError;
