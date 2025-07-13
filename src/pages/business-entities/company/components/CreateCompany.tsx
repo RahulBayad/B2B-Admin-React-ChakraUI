@@ -156,7 +156,7 @@ const companyFormSchema = z.object({
 
   enableBilling: z.string().nullable().optional(),
   userAccess: z.string().nullable().optional(),
-  billingDoc: z
+  billingDocs: z
   .array(
     z.object({
       doc_name: z.string().trim().nullable().optional(),

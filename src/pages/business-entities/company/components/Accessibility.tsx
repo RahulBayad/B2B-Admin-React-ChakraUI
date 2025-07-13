@@ -27,7 +27,7 @@ const Accessibility = () => {
 
   const { append, remove, fields } = useFieldArray({
     control,
-    name: "billingDoc",
+    name: "billingDocs",
   });
 
   return (
