@@ -18,11 +18,8 @@ import { Plus, Trash } from "lucide-react";
 const Accessibility = () => {
   const { control } = useFormContext<CompanyFormSchema>();
   const newBillingDoc = {
-    account_number: "",
-    account_holder_name: "",
-    bank_name: "",
-    ifsc_code: "",
-    primary: false,
+    doc_name: null,
+    doc_file: null
   };
 
   const { append, remove, fields } = useFieldArray({
@@ -102,13 +99,13 @@ const Accessibility = () => {
                   className="grid grid-cols-1 md:grid-cols-2 gap-4"
                 >
                   {renderInput<CompanyFormSchema>({
-                    fieldName: `billingDoc.${index}.doc_name`,
+                    fieldName: `billingDocs.${index}.doc_name`,
                     control,
                     label: "Document Name",
                     placeholder: "Enter Document Name",
                   })}
                   {renderInputFile<CompanyFormSchema>({
-                    fieldName: `billingDoc.${index}.doc_file`,
+                    fieldName: `billingDocs.${index}.doc_file`,
                     control,
                     label: "Upload Document",
                   })}

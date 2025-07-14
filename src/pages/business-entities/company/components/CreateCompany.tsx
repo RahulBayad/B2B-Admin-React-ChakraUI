@@ -116,17 +116,12 @@ const companyFormSchema = z.object({
         contact_person: z.string().trim().nullable().optional(),
         email: z.string().trim().nullable().optional(),
         phone: z.string().trim().nullable().optional(),
-        address: z
-          .object({
-            country: z.string().trim().nullable(),
-            state: z.string().trim().nullable(),
-            city: z.string().trim().nullable(),
-            pincode: z.coerce.number().nullable().optional(),
-            location: z.string().trim().nullable().optional(),
-          })
-          .nullable()
-          .optional(),
-      })
+        country: z.string().trim().nullable(),
+        state: z.string().trim().nullable(),
+        city: z.string().trim().nullable(),
+        pincode: z.coerce.number().nullable().optional(),
+        location: z.string().trim().nullable().optional(),
+  })
     )
     .nullable()
     .optional(),

@@ -2,14 +2,13 @@ import {
   Box,
   Button,
   Card,
-  
   Heading,
   IconButton,
   Separator,
 } from "@chakra-ui/react";
 import type { CompanyFormSchema } from "./CreateCompany";
 import {
-
+  Controller,
   useFieldArray,
   useFormContext,
   useWatch,
@@ -26,6 +25,8 @@ import {
 import { Plus, Trash } from "lucide-react";
 import { Country, State, City } from "country-state-city";
 import { useMemo } from "react";
+import { contactCodesOptions } from "@/utils/contactCodes";
+import { UiSelect, type SelectOptionsType } from "@/components/ui/UISelect";
 
 export const officeTypes = <T extends FieldValues>({
   name,
@@ -41,13 +42,11 @@ export const officeTypes = <T extends FieldValues>({
     contact_person: "",
     email: "",
     phone: "",
-    address: {
-      country: "",
-      state: "",
-      city: "",
-      pincode: null,
-      location: "",
-    },
+    country: "",
+    state: "",
+    city: "",
+    pincode: null,
+    location: "",
   };
 
   const { append, remove, fields } = useFieldArray({
@@ -128,7 +127,7 @@ export const officeTypes = <T extends FieldValues>({
                   inputType: "number",
                 })}
                 {renderSelect<T>({
-                  fieldName: `offices.${index}.address.country` as FieldPath<T>,
+                  fieldName: `offices.${index}.country` as FieldPath<T>,
                   label: "Country",
                   options: [
                     { label: "India", value: "India" },
@@ -138,7 +137,7 @@ export const officeTypes = <T extends FieldValues>({
                   placeholder: "Select Country",
                 })}
                 {renderSelect<T>({
-                  fieldName: `offices.${index}.address.state` as FieldPath<T>,
+                  fieldName: `offices.${index}.state` as FieldPath<T>,
                   label: "State",
                   options: [
                     { label: "Gujarat", value: "Gujarat" },
@@ -148,7 +147,7 @@ export const officeTypes = <T extends FieldValues>({
                   placeholder: "Select State",
                 })}
                 {renderSelect<T>({
-                  fieldName: `offices.${index}.address.city` as FieldPath<T>,
+                  fieldName: `offices.${index}.city` as FieldPath<T>,
                   label: "City",
                   options: [
                     { label: "Ahmedabad", value: "Ahmedabad" },
@@ -158,15 +157,14 @@ export const officeTypes = <T extends FieldValues>({
                   placeholder: "Select City",
                 })}
                 {renderInput<T>({
-                  fieldName: `offices.${index}.address.pincode` as FieldPath<T>,
+                  fieldName: `offices.${index}.pincode` as FieldPath<T>,
                   label: "Zip/Postal Code",
                   control: control,
                   placeholder: "e.g. 680291...",
                   inputType: "number",
                 })}
                 {renderInput<T>({
-                  fieldName:
-                    `offices.${index}.address.location` as FieldPath<T>,
+                  fieldName: `offices.${index}.location` as FieldPath<T>,
                   label: "Location",
                   control: control,
                   placeholder: "e.g. 70/703, Keshav Apartments...",
@@ -232,7 +230,11 @@ const CompanyDetails = () => {
   );
 
   const cityOfSelectedState = useMemo(
-    () => City.getCitiesOfState(selectedCountryCode as any, selectedStateCode as any),
+    () =>
+      City.getCitiesOfState(
+        selectedCountryCode as any,
+        selectedStateCode as any
+      ),
     [selectedCountryCode, selectedStateCode]
   );
 
@@ -293,8 +295,6 @@ const CompanyDetails = () => {
               inputType: "number",
               control,
             })}
-
-            
 
             {renderSelect<CompanyFormSchema>({
               fieldName: "industry",
@@ -405,13 +405,34 @@ const CompanyDetails = () => {
               control,
             })}
 
-            {renderInput<CompanyFormSchema>({
-              fieldName: "primary_contact_no",
-              label: "Primary Contact Number",
-              placeholder: "Enter Contact Number",
-              inputType: "number",
-              control,
-            })}
+            <div className="flex">
+              {/* {renderSelect<CompanyFormSchema>({
+                fieldName: "primary_contact_no_code",
+                label: "",
+                placeholder: "Code",
+                options: contactCodesOptions,
+                control,
+              })} */}
+              <Controller
+                name="primary_contact_no_code"
+                control={control}
+                render={(field)=> (
+                  <UiSelect
+                    {...field}
+                    // value={}
+                    isClearable
+                    options={contactCodesOptions}
+                  />
+                )}
+              />
+              {renderInput<CompanyFormSchema>({
+                fieldName: "primary_contact_no",
+                // label: "Primary Contact Number",
+                placeholder: "Enter Contact Number",
+                inputType: "number",
+                control,
+              })}
+            </div>
 
             {renderInput<CompanyFormSchema>({
               fieldName: "alternate_contact_no",

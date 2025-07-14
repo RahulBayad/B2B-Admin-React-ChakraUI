@@ -20,6 +20,7 @@ export function objectToFormData(obj: any, form: FormData = new FormData(), pref
       });
     } else if (typeof value === 'object') {
       objectToFormData(value, form, formKey);
+      // form.append(formKey, JSON.stringify(value))
     } else {
       form.append(formKey, value);
     }
