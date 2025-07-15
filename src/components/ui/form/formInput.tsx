@@ -13,6 +13,8 @@ import {
   type FieldValues,
 } from "react-hook-form";
 import { UiSelect, type SelectOptionsType } from "@/components/ui/UISelect";
+import type { StylesConfig } from "node_modules/react-select/dist/declarations/src/styles";
+import type { GroupBase } from "react-select";
 
 type RenderInputProps<T extends FieldValues> = {
   fieldName: FieldPath<T>;
@@ -25,9 +27,11 @@ type RenderInputProps<T extends FieldValues> = {
 type RenderSelectProps<T extends FieldValues> = {
   fieldName: FieldPath<T>;
   label?: string;
-  placeholder: string;
+  placeholder?: string;
   options: SelectOptionsType[];
   control: Control<T>;
+  isClearable?: boolean;
+  menuWidth?: string | number | undefined;
 };
 
 type RenderInputFileProps<T extends FieldValues> = {
@@ -69,6 +73,8 @@ export function renderSelect<T extends FieldValues>({
   placeholder,
   options,
   control,
+  isClearable = true,
+  menuWidth
 }: RenderSelectProps<T>) {
   return (
     <Controller
@@ -82,12 +88,13 @@ export function renderSelect<T extends FieldValues>({
             value={options.find(
               (opt) => opt.value === (field.value as SelectOptionsType)?.value
             )}
-            isClearable
+            isClearable={isClearable}
             onChange={(val) =>
               field.onChange((val as SelectOptionsType)?.value)
             }
             placeholder={placeholder}
             options={options}
+            menuWidth={menuWidth}
           />
           <FieldErrorText>{fieldState.error?.message || ""}</FieldErrorText>
         </Field.Root>

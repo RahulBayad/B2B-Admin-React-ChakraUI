@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Card,
+  Field,
   Heading,
   IconButton,
   Separator,
@@ -388,7 +389,7 @@ const CompanyDetails = () => {
           <br />
 
           <Heading mb={4}>Contact Information</Heading>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
             {renderInput<CompanyFormSchema>({
               fieldName: "primary_email",
               label: "Primary Email Address",
@@ -413,25 +414,44 @@ const CompanyDetails = () => {
                 options: contactCodesOptions,
                 control,
               })} */}
-              <Controller
-                name="primary_contact_no_code"
-                control={control}
-                render={(field)=> (
-                  <UiSelect
-                    {...field}
-                    // value={}
-                    isClearable
-                    options={contactCodesOptions}
-                  />
-                )}
-              />
-              {renderInput<CompanyFormSchema>({
-                fieldName: "primary_contact_no",
-                // label: "Primary Contact Number",
-                placeholder: "Enter Contact Number",
-                inputType: "number",
-                control,
-              })}
+              <Field.Root>
+              <Field.Label>Primary Contact Number</Field.Label>
+              <div className="flex">
+                {renderSelect<CompanyFormSchema>({
+                  fieldName: "primary_contact_no_code",
+                  placeholder: "",
+                  options: contactCodesOptions,
+                  control,
+                  isClearable: false,
+                  menuWidth: "200px"
+                })}
+                {renderInput<CompanyFormSchema>({
+                  fieldName: "primary_contact_no",
+                  // label: "Primary Contact Number",
+                  placeholder: "Enter Contact Number",
+                  inputType: "number",
+                  control,
+                })}
+              </div>
+                {/* <Controller
+                  name="primary_contact_no_code"
+                  control={control}
+                  render={(field)=> (
+                      <UiSelect
+                        {...field}
+                        // value={}
+                        styles={{
+                          menu: (base)=> ({
+                            ...base,
+                            width: "200px"
+                          })
+                        }}
+                        options={contactCodesOptions}
+                      />
+                    )}
+                  /> */}
+                
+              </Field.Root>
             </div>
 
             {renderInput<CompanyFormSchema>({

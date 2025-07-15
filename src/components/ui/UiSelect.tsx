@@ -6,9 +6,11 @@ export type SelectOptionsType = {
   value: string;
 };
 
-type UiSelectProps = SelectProps<SelectOptionsType>;
+type UiSelectProps = SelectProps<SelectOptionsType> & {
+  menuWidth : string | number | undefined
+};
 
-export const UiSelect = ({ options, ...props }: UiSelectProps) => {
+export const UiSelect = ({ options, menuWidth, ...props }: UiSelectProps) => {
   const { colorMode } = useColorMode();
 
   return (
@@ -29,6 +31,7 @@ export const UiSelect = ({ options, ...props }: UiSelectProps) => {
         menu: (baseStyles) => ({
           ...baseStyles,
           backgroundColor: colorMode === "dark" ? "black" : "white",
+          width : menuWidth ? menuWidth : "inherit"
         }),
         option: (baseStyles, props) => ({
           ...baseStyles,
