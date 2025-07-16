@@ -5,6 +5,7 @@ import {
   Field,
   Heading,
   IconButton,
+  Input,
   Separator,
 } from "@chakra-ui/react";
 import type { CompanyFormSchema } from "./CreateCompany";
@@ -26,7 +27,7 @@ import {
 import { Plus, Trash } from "lucide-react";
 import { Country, State, City } from "country-state-city";
 import { useMemo } from "react";
-import { contactCodesOptions } from "@/utils/contactCodes";
+import { getContactCodesOptions } from "@/utils/contactCodes";
 import { UiSelect, type SelectOptionsType } from "@/components/ui/UISelect";
 
 export const officeTypes = <T extends FieldValues>({
@@ -60,7 +61,7 @@ export const officeTypes = <T extends FieldValues>({
       <Box>
         {fields.map((field, index) => {
           return (
-            <Box position="relative">
+            <Box key={"key" + index} position="relative">
               <Box mb={2} className="flex justify-between items-center">
                 <Heading size="md">Office {index + 1}</Heading>
                 <IconButton
@@ -192,6 +193,10 @@ export const officeTypes = <T extends FieldValues>({
 const CompanyDetails = () => {
   const { control } = useFormContext<CompanyFormSchema>();
   const countries = useMemo(() => Country.getAllCountries(), []);
+  const contactCodesOptions = useMemo(
+    () => getContactCodesOptions(countries),
+    [countries]
+  );
   const countriesOptions = useMemo(
     () =>
       countries.map((country) => {
@@ -407,60 +412,104 @@ const CompanyDetails = () => {
             })}
 
             <div className="flex">
-              {/* {renderSelect<CompanyFormSchema>({
-                fieldName: "primary_contact_no_code",
-                label: "",
-                placeholder: "Code",
-                options: contactCodesOptions,
-                control,
-              })} */}
               <Field.Root>
-              <Field.Label>Primary Contact Number</Field.Label>
-              <div className="flex">
-                {renderSelect<CompanyFormSchema>({
-                  fieldName: "primary_contact_no_code",
-                  placeholder: "",
-                  options: contactCodesOptions,
-                  control,
-                  isClearable: false,
-                  menuWidth: "200px"
-                })}
-                {renderInput<CompanyFormSchema>({
-                  fieldName: "primary_contact_no",
-                  // label: "Primary Contact Number",
-                  placeholder: "Enter Contact Number",
-                  inputType: "number",
-                  control,
-                })}
-              </div>
-                {/* <Controller
-                  name="primary_contact_no_code"
-                  control={control}
-                  render={(field)=> (
-                      <UiSelect
+                <Field.Label>Primary Contact Number</Field.Label>
+                <div className="flex gap-1 mt-0">
+                  <div className="w-[120px]">
+                    <Controller
+                      name="primary_contact_no_code"
+                      control={control}
+                      render={({ field }) => (
+                        <UiSelect
+                          {...field}
+                          value={contactCodesOptions.find(
+                            (opt) => opt.value === field.value
+                          )}
+                          onChange={(val) =>
+                            field.onChange((val as SelectOptionsType)?.value)
+                          }
+                          placeholder=""
+                          menuWidth="200px"
+                          styles={{
+                            dropdownIndicator: (base) => ({
+                              ...base,
+                              padding: "0 3px",
+                            }),
+                          }}
+                          options={contactCodesOptions}
+                        />
+                      )}
+                    />
+                  </div>
+                  <Controller
+                    name="primary_contact_no"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        type="number"
+                        placeholder="Enter Contact Number"
                         {...field}
-                        // value={}
-                        styles={{
-                          menu: (base)=> ({
-                            ...base,
-                            width: "200px"
-                          })
-                        }}
-                        options={contactCodesOptions}
+                        value={(field.value as string | number | null) ?? ""}
                       />
                     )}
-                  /> */}
-                
+                  />
+                </div>
               </Field.Root>
             </div>
 
-            {renderInput<CompanyFormSchema>({
+            <div className="flex">
+              <Field.Root>
+                <Field.Label>Alternate Contact Number</Field.Label>
+                <div className="flex gap-1 mt-0">
+                  <div className="w-[120px]">
+                    <Controller
+                      name="alternate_contact_no_code"
+                      control={control}
+                      render={({ field }) => (
+                        <UiSelect
+                          {...field}
+                          value={contactCodesOptions.find(
+                            (opt) => opt.value === field.value
+                          )}
+                          onChange={(val) =>
+                            field.onChange((val as SelectOptionsType)?.value)
+                          }
+                          placeholder=""
+                          menuWidth="200px"
+                          styles={{
+                            dropdownIndicator: (base) => ({
+                              ...base,
+                              padding: "0 3px",
+                            }),
+                          }}
+                          options={contactCodesOptions}
+                        />
+                      )}
+                    />
+                  </div>
+                  <Controller
+                    name="alternate_contact_no"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        type="number"
+                        placeholder="Enter Alternate Contact Number"
+                        {...field}
+                        value={(field.value as string | number | null) ?? ""}
+                      />
+                    )}
+                  />
+                </div>
+              </Field.Root>
+            </div>
+
+            {/* {renderInput<CompanyFormSchema>({
               fieldName: "alternate_contact_no",
               label: "Alternate Contact Number",
               placeholder: "Enter Alternate Contact Number",
               inputType: "number",
               control,
-            })}
+            })} */}
           </div>
 
           <br />
@@ -540,13 +589,57 @@ const CompanyDetails = () => {
                   placeholder: "Enter Office Name",
                   inputType: "email",
                 })}
-                {renderInput<CompanyFormSchema>({
-                  fieldName: "headOffice.phone",
-                  label: "Contact Number",
-                  control: control,
-                  placeholder: "Contact Number",
-                  inputType: "number",
-                })}
+
+                <div className="flex">
+                  <Field.Root>
+                    <Field.Label>Contact Number</Field.Label>
+                    <div className="flex gap-1 mt-0">
+                      <div className="w-38">
+                        <Controller
+                          name="headOffice.phone_code"
+                          control={control}
+                          render={({ field }) => (
+                            <UiSelect
+                              {...field}
+                              value={contactCodesOptions.find(
+                                (opt) => opt.value === field.value
+                              )}
+                              onChange={(val) =>
+                                field.onChange(
+                                  (val as SelectOptionsType)?.value
+                                )
+                              }
+                              placeholder=""
+                              menuWidth="200px"
+                              styles={{
+                                dropdownIndicator: (base) => ({
+                                  ...base,
+                                  padding: "0 3px",
+                                }),
+                              }}
+                              options={contactCodesOptions}
+                            />
+                          )}
+                        />
+                      </div>
+                      <Controller
+                        name="headOffice.phone"
+                        control={control}
+                        render={({ field }) => (
+                          <Input
+                            type="number"
+                            placeholder="Enter Contact Number"
+                            {...field}
+                            value={
+                              (field.value as string | number | null) ?? ""
+                            }
+                          />
+                        )}
+                      />
+                    </div>
+                  </Field.Root>
+                </div>
+                
                 {renderSelect<CompanyFormSchema>({
                   fieldName: "headOffice.country",
                   label: "Country",

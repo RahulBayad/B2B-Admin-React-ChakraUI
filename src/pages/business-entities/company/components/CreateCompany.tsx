@@ -62,9 +62,9 @@ const companyFormSchema = z.object({
   company_website: z.string().trim().optional(),
   company_logo_url: fileSchema,
   primary_contact_no: z.coerce.number().nullable().optional(),
-  primary_contact_no_code: z.coerce.number().nullable().optional(), // Made optional to avoid missing input issue
+  primary_contact_no_code: z.string().nullable().optional(), // Made optional to avoid missing input issue
   alternate_contact_no: z.coerce.number().nullable().optional(),
-  alternate_contact_no_code: z.coerce.number().nullable().optional(),
+  alternate_contact_no_code: z.string().nullable().optional(),
   primary_email: z
     .string()
     .trim()
@@ -98,6 +98,7 @@ const companyFormSchema = z.object({
       office_gst: z.string().trim().nullable().optional(),
       contact_person: z.string().trim().nullable().optional(),
       email: z.string().trim().nullable().optional(),
+      phone_code: z.string().trim().nullable().optional(),
       phone: z.string().trim().nullable().optional(),
       country: z.string().trim().nullable().optional(),
       state: z.string().trim().nullable().optional(),
@@ -145,6 +146,7 @@ const companyFormSchema = z.object({
       designation: z.string().trim().nullable().optional(),
       company_name: z.string().trim().nullable().optional(),
       email: z.string().trim().nullable().optional(),
+      phone_code: z.string().trim().nullable().optional(),
       phone: z.string().trim().nullable().optional(),
     })
     .nullable()

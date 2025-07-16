@@ -1,13 +1,20 @@
-import { Box, Card, Heading } from "@chakra-ui/react";
+import { Box, Card, Field, Heading, Input } from "@chakra-ui/react";
 import type { CompanyFormSchema } from "./CreateCompany";
-import { useFormContext } from "react-hook-form";
-import {
-  renderInput,
-  renderSelect,
-} from "@/components/ui/form/formInput";
+import { Controller, useFormContext } from "react-hook-form";
+import { renderInput, renderSelect } from "@/components/ui/form/formInput";
+import { UiSelect, type SelectOptionsType } from "@/components/ui/UISelect";
+import { useMemo } from "react";
+import { getContactCodesOptions } from "@/utils/contactCodes";
+import { Country } from "country-state-city";
 
 const References = () => {
   const { control } = useFormContext<CompanyFormSchema>();
+  const countries = useMemo(() => Country.getAllCountries(), []);
+    const contactCodesOptions = useMemo(
+      () => getContactCodesOptions(countries),
+      [countries]
+    );
+
   return (
     <Card.Root>
       <Card.Body>
@@ -45,13 +52,52 @@ const References = () => {
             placeholder: "Enter Person Name",
             control,
           })}
-          {renderInput<CompanyFormSchema>({
-            fieldName: "reference.phone",
-            label: "Contact Number",
-            placeholder: "Enter Contact Number",
-            control,
-            inputType: "number",
-          })}
+          <div className="flex">
+            <Field.Root>
+              <Field.Label>Contact Number</Field.Label>
+              <div className="flex gap-1 mt-0">
+                <div className="w-[150px]">
+                  <Controller
+                    name="reference.phone_code"
+                    control={control}
+                    render={({ field }) => (
+                      <UiSelect
+                        {...field}
+                        value={contactCodesOptions.find(
+                          (opt) => opt.value === field.value
+                        )}
+                        onChange={(val) =>
+                          field.onChange((val as SelectOptionsType)?.value)
+                        }
+                        placeholder=""
+                        menuWidth="200px"
+                        styles={{
+                          dropdownIndicator: (base) => ({
+                            ...base,
+                            padding: "0 3px",
+                          }),
+                        }}
+                        options={contactCodesOptions}
+                      />
+                    )}
+                  />
+                </div>
+                <Controller
+                  name="reference.phone"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      type="number"
+                      placeholder="Enter Contact Number"
+                      {...field}
+                      value={(field.value as string | number | null) ?? ""}
+                    />
+                  )}
+                />
+              </div>
+            </Field.Root>
+          </div>
+          
         </Box>
       </Card.Body>
     </Card.Root>

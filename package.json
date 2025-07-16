@@ -29,6 +29,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.2",
     "react-select": "^5.10.1",
+    "react-window": "^1.8.11",
     "sonner": "^2.0.6",
     "tailwindcss": "^4.1.10",
     "zod": "^3.25.67"
@@ -38,6 +39,7 @@
     "@types/node": "^24.0.3",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "@types/react-window": "^1.8.8",
     "@vitejs/plugin-react": "^4.4.1",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",

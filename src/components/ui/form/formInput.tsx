@@ -32,6 +32,7 @@ type RenderSelectProps<T extends FieldValues> = {
   control: Control<T>;
   isClearable?: boolean;
   menuWidth?: string | number | undefined;
+  styles? : StylesConfig<SelectOptionsType, boolean, GroupBase<SelectOptionsType>>
 };
 
 type RenderInputFileProps<T extends FieldValues> = {
@@ -74,7 +75,8 @@ export function renderSelect<T extends FieldValues>({
   options,
   control,
   isClearable = true,
-  menuWidth
+  menuWidth,
+  styles
 }: RenderSelectProps<T>) {
   return (
     <Controller
@@ -95,6 +97,7 @@ export function renderSelect<T extends FieldValues>({
             placeholder={placeholder}
             options={options}
             menuWidth={menuWidth}
+            styles={styles}
           />
           <FieldErrorText>{fieldState.error?.message || ""}</FieldErrorText>
         </Field.Root>
